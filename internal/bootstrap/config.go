@@ -1,0 +1,36 @@
+package bootstrap
+
+import (
+	"encoding/json"
+	log "github.com/sirupsen/logrus"
+	"interview-backend/cmd/flags"
+	"interview-backend/internal/conf"
+	"interview-backend/util"
+	"os"
+	"path/filepath"
+)
+
+func InitConfig() {
+	configPath := filepath.Join(flags.DataDir, "config.json")
+	log.Infof("Loading config from %s", configPath)
+	if !util.FileExist(configPath) {
+		log.Infof("config file not exists, setting default config file")
+		_, err := util.CreateFile(configPath)
+		if err != nil {
+			log.Fatalf("init config file failed: %s", err)
+		}
+		conf.Conf = conf.DefaultConfig()
+		if err := util.JsonToFile(configPath, conf.Conf); err != nil {
+			log.Fatalf("init config file failed: %s", err)
+		}
+	} else {
+		configBytes, err := os.ReadFile(configPath)
+		if err != nil {
+			log.Fatalf("load config file failed: %s", err)
+		}
+		conf.Conf = conf.DefaultConfig()
+		if err := json.Unmarshal(configBytes, conf.Conf); err != nil {
+			log.Fatalf("init config file failed: %s", err)
+		}
+	}
+}
