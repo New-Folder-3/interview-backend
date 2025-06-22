@@ -14,6 +14,7 @@ var pid = -1
 var pidFile string
 
 func Init() {
+	bootstrap.InitFile()
 	bootstrap.InitConfig()
 	bootstrap.InitDB()
 }

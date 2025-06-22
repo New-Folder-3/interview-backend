@@ -11,7 +11,7 @@ var db *gorm.DB
 
 func Init(d *gorm.DB) {
 	db = d
-	err := autoMigrate(new(model.User))
+	err := autoMigrate(new(model.User), new(model.Token))
 	if err != nil {
 		log.Fatalf("failed migrate database: %s", err.Error())
 	}

@@ -21,6 +21,7 @@ type Database struct {
 type Schema struct {
 	Port   int    `json:"port" env:"PORT"`
 	Listen string `json:"listen" env:"LISTEN"`
+	URL    string `json:"url" env:"URL"`
 }
 
 type Config struct {
@@ -40,6 +41,7 @@ func DefaultConfig() *Config {
 		Schema: Schema{
 			Port:   2233,
 			Listen: "127.0.0.1",
+			URL:    "https://mydomain.com",
 		},
 	}
 }

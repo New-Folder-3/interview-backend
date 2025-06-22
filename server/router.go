@@ -3,6 +3,7 @@ package server
 import (
 	"github.com/gin-gonic/gin"
 	"html/template"
+	"interview-backend/cmd/flags"
 	"interview-backend/public"
 	"interview-backend/server/handles"
 	"io/fs"
@@ -18,8 +19,14 @@ func Init(e *gin.Engine) {
 
 	api := e.Group("/api")
 	auth := api.Group("/auth")
-	auth.POST("/login/hash", handles.LoginHash)
-	auth.POST("/login/pwd", handles.LoginPwd)
-	
+
+	auth.POST("/login/pwd", handles.LoginPwdHandle)
+	auth.POST("/login/token", handles.LoginTokenHandle)
+	auth.POST("/register", handles.RegisterHandle)
+	api.POST("/upload/image", handles.PicUploaderHandle)
+	api.POST("/upload/audio", handles.AudioUploaderHandle)
+	api.Static("/image", flags.DataDir+"image")
+	api.Static("/audio", flags.DataDir+"audio")
+
 	e.NoRoute(func(c *gin.Context) { c.HTML(http.StatusOK, "index.html", nil) })
 }

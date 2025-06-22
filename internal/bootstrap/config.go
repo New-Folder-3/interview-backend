@@ -12,7 +12,6 @@ import (
 
 func InitConfig() {
 	configPath := filepath.Join(flags.DataDir, "config.json")
-	log.Infof("Loading config from %s", configPath)
 	if !util.FileExist(configPath) {
 		log.Infof("config file not exists, setting default config file")
 		_, err := util.CreateFile(configPath)
