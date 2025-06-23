@@ -3,10 +3,10 @@ package model
 type User struct {
 	Name              string `json:"name" gorm:"not null"`
 	ID                string `json:"id" gorm:"PrimaryKey;not null"`
-	Email             string `json:"email" gorm:"unique"`
-	Phone             string `json:"phone" gorm:"unique"`
-	PwdHash           string `json:"-"`
-	PwdTS             int64  `json:"-"`
+	Email             string `json:"email" gorm:"unique;not null"`
+	Phone             string `json:"phone" gorm:"unique;not null"`
+	PwdHash           string `json:"-" gorm:"not null"`
+	PwdTS             int64  `json:"-" gorm:"not null"`
 	PreferInterviewer int    `json:"prefer_interviewer" gorm:"not null"`
 	// 0: ssss
 	// 1: ssss

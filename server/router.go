@@ -6,6 +6,7 @@ import (
 	"interview-backend/cmd/flags"
 	"interview-backend/public"
 	"interview-backend/server/handles"
+	"interview-backend/server/handles/middlewares"
 	"io/fs"
 	"net/http"
 )
@@ -23,8 +24,11 @@ func Init(e *gin.Engine) {
 	auth.POST("/login/pwd", handles.LoginPwdHandle)
 	auth.POST("/login/token", handles.LoginTokenHandle)
 	auth.POST("/register", handles.RegisterHandle)
+	auth.POST("/logout", handles.LogoutHandle)
 	api.POST("/upload/image", handles.PicUploaderHandle)
 	api.POST("/upload/audio", handles.AudioUploaderHandle)
+	api.GET("/user/get", middlewares.Auth, handles.GetUser)
+	api.GET("/user/update", middlewares.Auth, handles.UpdateUser)
 	api.Static("/image", flags.DataDir+"image")
 	api.Static("/audio", flags.DataDir+"audio")
 
