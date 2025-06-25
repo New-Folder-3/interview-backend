@@ -1,0 +1,395 @@
+{
+	"info": {
+		"_postman_id": "2e7707f0-ab8b-49b9-97c9-6df1363e724b",
+		"name": "Register",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46174207"
+	},
+	"item": [
+		{
+			"name": "register",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"stephenzeng\",\n    \"pwd\": \"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92\",\n    \"email\": \"a@a.a\",\n    \"phone\": \"10086\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:2233/api/auth/register",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "2233",
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login pwd",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"stephenzeng\",\n    \"pwd\": \"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92\",\n    \"keeplogin\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:2233/api/auth/login/pwd",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "2233",
+					"path": [
+						"api",
+						"auth",
+						"login",
+						"pwd"
+					]
+				},
+				"description": "login pwd"
+			},
+			"response": []
+		},
+		{
+			"name": "login token",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"token\": \"bKqmvp0gzjEDaMPqtHdwnUi9a3v9lgY0v0gwPV3II8HTmixavrpV5l5WqY20RFQY\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:2233/api/auth/login/token",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "2233",
+					"path": [
+						"api",
+						"auth",
+						"login",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"token\": \"bKqmvp0gzjEDaMPqtHdwnUi9a3v9lgY0v0gwPV3II8HTmixavrpV5l5WqY20RFQY\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:2233/api/auth/login/token",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "2233",
+					"path": [
+						"api",
+						"auth",
+						"login",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "image upload",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "nlVl7pDzO85T2Py4Eo6SgXIy6OAt40LPiwyBoJ56YlJhpf2fSsEkP7dcSgdpEzus",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"contentType": "multipart/form-data",
+							"type": "file",
+							"src": "/Users/stephenzeng/Pictures/Untitled.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:2233/api/upload/image",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "2233",
+					"path": [
+						"api",
+						"upload",
+						"image"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "audio upload",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "nlVl7pDzO85T2Py4Eo6SgXIy6OAt40LPiwyBoJ56YlJhpf2fSsEkP7dcSgdpEzus",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"contentType": "multipart/form-data",
+							"type": "file",
+							"src": "/Users/stephenzeng/Music/1_marvel-ryan-taubert-musicbed_(Instrumental).mp3"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:2233/api/upload/audio",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "2233",
+					"path": [
+						"api",
+						"upload",
+						"audio"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user get",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "nlVl7pDzO85T2Py4Eo6SgXIy6OAt40LPiwyBoJ56YlJhpf2fSsEkP7dcSgdpEzus",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"stephenzeng\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:2233/api/user/get",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "2233",
+					"path": [
+						"api",
+						"user",
+						"get"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user update",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "nlVl7pDzO85T2Py4Eo6SgXIy6OAt40LPiwyBoJ56YlJhpf2fSsEkP7dcSgdpEzus",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"stephenzeng\",\n    \"nickname\": \"Stephen Zeng\",\n    \"email\": \"a@a.a\",\n    \"phone\": \"10068111\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:2233/api/user/update/info",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "2233",
+					"path": [
+						"api",
+						"user",
+						"update",
+						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user update pwd",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "nlVl7pDzO85T2Py4Eo6SgXIy6OAt40LPiwyBoJ56YlJhpf2fSsEkP7dcSgdpEzus",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"stephenzeng\",\n    \"oldpwd\": \"8bb0cf6eb9b17d0f7d22b456f121257dc1254e1f01665370476383ea776df414\",\n    \"newpwd\": \"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:2233/api/user/update/pwd",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "2233",
+					"path": [
+						"api",
+						"user",
+						"update",
+						"pwd"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
