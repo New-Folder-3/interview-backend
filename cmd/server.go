@@ -10,7 +10,7 @@ import (
 	"interview-backend/cmd/flags"
 	"interview-backend/internal/client"
 	"interview-backend/internal/conf"
-	"interview-backend/server"
+	"interview-backend/internal/server"
 	"interview-backend/util"
 	"net/http"
 	"os"
@@ -75,4 +75,8 @@ func serverStart() {
 	}()
 	wg.Wait()
 	util.Log.Infof("Server gracefully stopped")
+}
+
+func init() {
+	RootCmd.AddCommand(ServerCmd)
 }

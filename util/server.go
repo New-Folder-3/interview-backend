@@ -1,6 +1,8 @@
 package util
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 func ErrorResp(c *gin.Context, err string, code int, isInternal bool) {
 	c.JSON(code, gin.H{

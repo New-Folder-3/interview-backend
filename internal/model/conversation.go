@@ -1,15 +1,15 @@
 package model
 
 type Conversation struct {
-	UUID      string `json:"uuid" form:"uuid"`
-	UserID    string `json:"userid" form:"userid"`
-	SysPrompt string `json:"sysprompt" form:"sysprompt"`
-}
+	ID       string `json:"id" gorm:"primary_key;unique;not null"`
+	UserID   string `json:"userid" form:"userid"`
+	Model    string `json:"model" form:"model"`
+	Messages string `json:"talkings" form:"talkings"` // IDs of the talking entries in this conversation
 
-type Message struct {
-	Role  string    `json:"role" form:"role"`
-	Text  *string   `json:"text,omitempty" form:"text"`
-	Image *string   `json:"image,omitempty" form:"image"`
-	Audio *string   `json:"audio,omitempty" form:"audio"`
-	Video *[]string `json:"video,omitempty" form:"video"`
+	ResultFormat      *string  `json:"result_format,omitempty"`
+	Temperature       *float64 `json:"temperature,omitempty"`
+	TopP              *float64 `json:"top_p,omitempty"`
+	EnableThinking    *bool    `json:"enable_thinking,omitempty"`
+	PresencePenalty   *float64 `json:"presence_penalty,omitempty"`
+	IncrementalOutput *bool    `json:"incremental_output,omitempty"`
 }

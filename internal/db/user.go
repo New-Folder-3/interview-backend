@@ -10,7 +10,7 @@ func CreateUser(u *model.User) error {
 }
 
 func UpdateUser(u *model.User) error {
-	return errors.WithStack(db.Model(&u).Error)
+	return db.Model(u).Updates(u).Error
 }
 
 func DeleteUser(u *model.User) error {

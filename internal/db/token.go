@@ -1,12 +1,13 @@
 package db
 
 import (
+	"github.com/pkg/errors"
 	"interview-backend/internal/model"
 	"time"
 )
 
 func CreateToken(t *model.Token) error {
-	return db.Create(t).Error
+	return errors.WithStack(db.Create(t).Error)
 }
 
 func GetToken(token string) (*model.Token, error) {
@@ -14,15 +15,15 @@ func GetToken(token string) (*model.Token, error) {
 	ClearExpiredTokens()
 	err := db.Where("token = ?", token).First(&t).Error
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	return &t, nil
 }
 
-func DeleteToken(user, token string) error {
-	return db.Where("user_id = ? AND token = ?", user, token).Delete(&model.Token{}).Error
+func DeleteToken(token string) error {
+	return db.Where("token = ?", token).Delete(&model.Token{}).Error
 }
 
 func ClearExpiredTokens() error {
-	return db.Where("expire_ts < ?", time.Now().Unix()).Delete(&model.Token{}).Error
+	return errors.WithStack(db.Where("expire_ts < ?", time.Now().Unix()).Delete(&model.Token{}).Error)
 }

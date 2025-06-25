@@ -11,6 +11,7 @@ import (
 func LoginPwdHandle(c *gin.Context) {
 	var loginRequest AuthRequest
 	if err := c.ShouldBind(&loginRequest); err != nil {
+		util.ErrorPrinter(err)
 		util.ErrorResp(c, err.Error(), 400, false)
 		return
 	}
@@ -38,11 +39,13 @@ func LoginPwdHandle(c *gin.Context) {
 			newToken.ExpireTS = time.Now().AddDate(0, 0, 1).Unix()
 		}
 		if err := db.CreateToken(&newToken); err != nil {
+			util.ErrorPrinter(err)
 			util.ErrorResp(c, err.Error(), 400, false)
 			return
 		}
 		util.SuccessResp(c, newToken, "Login successful")
 	} else {
+		util.ErrorPrinter(err)
 		util.ErrorResp(c, "Invalid credentials", 400, false)
 		return
 	}
@@ -51,11 +54,13 @@ func LoginPwdHandle(c *gin.Context) {
 func LoginTokenHandle(c *gin.Context) {
 	var loginRequest AuthRequest
 	if err := c.ShouldBind(&loginRequest); err != nil {
+		util.ErrorPrinter(err)
 		util.ErrorResp(c, err.Error(), 400, false)
 		return
 	}
 	token, err := db.GetToken(loginRequest.Token)
 	if err != nil {
+		util.ErrorPrinter(err)
 		util.ErrorResp(c, "Invalid credentials", 400, false)
 	} else {
 		util.SuccessResp(c, token, "Login successful")
@@ -63,9 +68,14 @@ func LoginTokenHandle(c *gin.Context) {
 }
 
 func LogoutHandle(c *gin.Context) {
-	token := c.Query("token")
-	user := c.Query("user")
-	if err := db.DeleteToken(user, token); err != nil {
+	var logoutRequest AuthRequest
+	if err := c.ShouldBind(&logoutRequest); err != nil {
+		util.ErrorPrinter(err)
+		util.ErrorResp(c, err.Error(), 400, false)
+		return
+	}
+	if err := db.DeleteToken(logoutRequest.Token); err != nil {
+		util.ErrorPrinter(err)
 		util.ErrorResp(c, "Unable to logout", 400, false)
 	} else {
 		util.SuccessResp(c, nil, "Logged out successfully")
@@ -74,7 +84,8 @@ func LogoutHandle(c *gin.Context) {
 
 func RegisterHandle(c *gin.Context) {
 	var registerRequest AuthRequest
-	if err := c.ShouldBind(&registerRequest); err != nil {
+	if err := c.ShouldBindJSON(&registerRequest); err != nil {
+		util.ErrorPrinter(err)
 		util.ErrorResp(c, err.Error(), 400, false)
 		return
 	}
@@ -87,6 +98,7 @@ func RegisterHandle(c *gin.Context) {
 		PwdTS:   time.Now().Unix(),
 	}
 	if err := db.CreateUser(&user); err != nil {
+		util.ErrorPrinter(err)
 		util.ErrorResp(c, err.Error(), 400, false)
 	} else {
 		util.SuccessResp(c, user, "Register successful")

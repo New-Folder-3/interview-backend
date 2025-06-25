@@ -1,6 +1,7 @@
 package db
 
 import (
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"interview-backend/internal/conf"
@@ -28,7 +29,7 @@ func autoMigrate(dst ...interface{}) error {
 	} else {
 		err = db.AutoMigrate(dst...)
 	}
-	return err
+	return errors.WithStack(err)
 }
 
 func Close() {

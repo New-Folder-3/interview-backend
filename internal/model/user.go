@@ -8,6 +8,7 @@ type User struct {
 	PwdHash           string `json:"-" gorm:"not null"`
 	PwdTS             int64  `json:"-" gorm:"not null"`
 	PreferInterviewer int    `json:"prefer_interviewer" gorm:"not null"`
+	Conversation      string `json:"conversation"`
 	// 0: ssss
 	// 1: ssss
 

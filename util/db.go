@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"interview-backend/internal/conf"
+	"strings"
 )
 
 func DbGetColumnName(name string) string {
@@ -10,4 +11,32 @@ func DbGetColumnName(name string) string {
 		return fmt.Sprintf(`"%s"`, name)
 	}
 	return fmt.Sprintf("`%s`", name)
+}
+
+func StringListToDB(list []string) string {
+	if len(list) == 0 {
+		return ""
+	}
+	result := ""
+	for i, item := range list {
+		if i > 0 {
+			result += ","
+		}
+		result += fmt.Sprintf("'%s'", item)
+	}
+	return result
+}
+
+func DBToStringList(dbList string) []string {
+	if dbList == "" {
+		return nil
+	}
+	var result []string
+	items := strings.Split(dbList, ",")
+	for _, item := range items {
+		if item != "" {
+			result = append(result, item)
+		}
+	}
+	return result
 }

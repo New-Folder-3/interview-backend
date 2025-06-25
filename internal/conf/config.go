@@ -24,9 +24,14 @@ type Schema struct {
 	URL    string `json:"url" env:"URL"`
 }
 
+type Key struct {
+	AliyunAPIKey string `json:"aliyunApiKey" env:"ALIYUN_API_KEY"`
+}
+
 type Config struct {
 	Database Database `json:"database" envPrefix:"DB_"`
 	Schema   Schema   `json:"schema" envPrefix:"SCHEMA"`
+	API      Key      `json:"api" envPrefix:"API_"`
 }
 
 func DefaultConfig() *Config {

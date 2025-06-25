@@ -9,3 +9,9 @@ var (
 var SysPrompt = []string{
 	"你是一位专业的面试官，正在为职位面试应聘者。",
 }
+
+var Role = []string{
+	"system",
+	"user",
+	"assistant",
+}
