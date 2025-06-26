@@ -27,6 +27,5 @@ func init() {
 		os.Exit(1)
 	}
 	RootCmd.PersistentFlags().StringVar(&flags.DataDir, "data", exePath+"/data", "data folder")
-	RootCmd.PersistentFlags().BoolVar(&flags.Debug, "debug", false, "start with debug mode")
 	RootCmd.PersistentFlags().BoolVar(&flags.Dev, "dev", false, "start with dev mode")
 }

@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -31,11 +32,20 @@ var ServerCmd = &cobra.Command{
 
 func serverStart() {
 	Init()
-	if !flags.Debug && !flags.Dev {
+	config := cors.DefaultConfig()
+	if !flags.Dev {
 		gin.SetMode(gin.ReleaseMode)
+		config.AllowMethods = []string{"GET", "POST"}
+	} else {
+		gin.SetMode(gin.DebugMode)
+		config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+		config.AllowAllOrigins = true
 	}
 	r := gin.New()
-	r.Use(gin.LoggerWithWriter(log.StandardLogger().Out), gin.RecoveryWithWriter(log.StandardLogger().Out))
+	r.Use(
+		gin.LoggerWithWriter(log.StandardLogger().Out),
+		gin.RecoveryWithWriter(log.StandardLogger().Out),
+		cors.New(config))
 	server.Init(r)
 	client.Init()
 
