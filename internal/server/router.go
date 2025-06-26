@@ -24,6 +24,7 @@ func Init(e *gin.Engine) {
 	upload := api.Group("/upload")
 	user := api.Group("/user")
 	conversation := api.Group("/conversation")
+	message := api.Group("/message")
 	download := api.Group("/download")
 
 	auth.POST("/login/pwd", handles.LoginPwdHandle)
@@ -37,8 +38,10 @@ func Init(e *gin.Engine) {
 	user.POST("/update/pwd", middlewares.Auth, handles.UpdateUserPwd)
 	conversation.GET("/all", middlewares.Auth, handles.GetAllConversations)
 	conversation.GET("/get", middlewares.Auth, handles.GetConversation)
-	conversation.POST("/create", middlewares.Auth, handles.CreateConversation)
-	conversation.POST("/msg", middlewares.Auth, handles.CreateMessage)
+	conversation.POST("/new", middlewares.Auth, handles.CreateConversation)
+	conversation.DELETE("/del", middlewares.Auth, handles.DeleteConversation)
+	message.POST("/new", middlewares.Auth, handles.CreateMessage)
+	message.DELETE("/del", middlewares.Auth, handles.DeleteMessage)
 	download.Static("/image", filepath.Join(flags.DataDir, "image"))
 	download.Static("/audio", filepath.Join(flags.DataDir, "audio"))
 

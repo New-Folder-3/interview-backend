@@ -18,9 +18,13 @@ func CreateConversation(c *model.Conversation) error {
 }
 
 func DeleteConversation(ConversationID string) error {
-	return errors.WithStack(db.Delete(&model.Conversation{}, ConversationID).Error)
+	return errors.WithStack(db.Where("id = ?", ConversationID).Delete(&model.Conversation{}).Error)
 }
 
 func UpdateConversation(c *model.Conversation) error {
 	return errors.WithStack(db.Model(c).Updates(c).Error)
+}
+
+func ReplaceConversation(c *model.Conversation) error {
+	return errors.WithStack(db.Model(c).Save(c).Error)
 }

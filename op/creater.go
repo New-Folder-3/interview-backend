@@ -8,12 +8,13 @@ import (
 	"interview-backend/util"
 )
 
-func CreateConversation(UserID string, c *Conversation) (string, error) {
+func CreateConversation(UserID string, c *Conversation, preferRole int) (string, error) {
 	id := util.GenerateToken(16)
 	conversation := model.Conversation{
-		ID:     id,
-		UserID: UserID,
-		Model:  c.Model,
+		ID:         id,
+		UserID:     UserID,
+		Model:      c.Model,
+		PreferRole: preferRole,
 
 		ResultFormat:      c.Parameters.ResultFormat,
 		Temperature:       c.Parameters.Temperature,
@@ -63,9 +64,9 @@ func CreateMessage(ConversationID string, role int) (string, error) {
 
 func CreateContent(MessageID string, c *Content) (string, error) {
 	id := util.GenerateToken(16)
-	videos := util.StringListToDB(*c.Video)
 	var videoPtr *string
-	if len(videos) > 0 {
+	if c.Video != nil {
+		videos := util.StringListToDB(*c.Video)
 		videoPtr = &videos
 	} else {
 		videoPtr = nil
@@ -95,14 +96,16 @@ func CreateContent(MessageID string, c *Content) (string, error) {
 }
 
 func AddContent(MessageID, text string, images, audios []string, videos [][]string) error {
-	_, err := CreateContent(MessageID, &Content{
-		Text: &text,
-	})
-	if err != nil {
-		return errors.WithStack(err)
+	if text != "" {
+		_, err := CreateContent(MessageID, &Content{
+			Text: &text,
+		})
+		if err != nil {
+			return errors.WithStack(err)
+		}
 	}
 	for _, image := range images {
-		_, err = CreateContent(MessageID, &Content{
+		_, err := CreateContent(MessageID, &Content{
 			Image: &image,
 		})
 		if err != nil {
@@ -110,7 +113,7 @@ func AddContent(MessageID, text string, images, audios []string, videos [][]stri
 		}
 	}
 	for _, audio := range audios {
-		_, err = CreateContent(MessageID, &Content{
+		_, err := CreateContent(MessageID, &Content{
 			Audio: &audio,
 		})
 		if err != nil {
@@ -121,7 +124,7 @@ func AddContent(MessageID, text string, images, audios []string, videos [][]stri
 		if len(video) == 0 {
 			continue
 		}
-		_, err = CreateContent(MessageID, &Content{
+		_, err := CreateContent(MessageID, &Content{
 			Video: &video,
 		})
 		if err != nil {

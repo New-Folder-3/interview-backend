@@ -22,7 +22,7 @@ func StringListToDB(list []string) string {
 		if i > 0 {
 			result += ","
 		}
-		result += fmt.Sprintf("'%s'", item)
+		result += fmt.Sprintf("%s", item)
 	}
 	return result
 }
@@ -39,4 +39,18 @@ func DBToStringList(dbList string) []string {
 		}
 	}
 	return result
+}
+
+func RemoveFromDBList(dbList string, item string) string {
+	if dbList == "" {
+		return ""
+	}
+	items := strings.Split(dbList, ",")
+	var result []string
+	for _, i := range items {
+		if i != item {
+			result = append(result, i)
+		}
+	}
+	return StringListToDB(result)
 }

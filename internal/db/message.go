@@ -18,9 +18,13 @@ func CreateMessage(t *model.Message) error {
 }
 
 func DeleteMessage(MessageID string) error {
-	return errors.WithStack(db.Delete(&model.Message{}, MessageID).Error)
+	return errors.WithStack(db.Where("id = ?", MessageID).Delete(&model.Message{}).Error)
 }
 
 func UpdateMessage(t *model.Message) error {
 	return errors.WithStack(db.Model(t).Updates(t).Error)
+}
+
+func ReplaceMessage(t *model.Message) error {
+	return errors.WithStack(db.Model(t).Save(t).Error)
 }

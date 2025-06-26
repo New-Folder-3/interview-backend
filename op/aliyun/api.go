@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	"interview-backend/internal/client"
@@ -21,8 +20,8 @@ func ChatWithProxy(sender *op.Conversation, key string, c *gin.Context) (*op.Res
 	req.Header.Set("Authorization", "Bearer "+key)
 	req.Header.Set("X-DashScope-SSE", "enable")
 	resp, err := client.GlobalHTTPClient.Do(req)
-	if err != nil {
-		return nil, errors.WithStack(err)
+	if err != nil || resp.StatusCode != http.StatusOK {
+		return nil, errors.WithMessage(err, resp.Status)
 	}
 	defer resp.Body.Close()
 
@@ -37,15 +36,14 @@ func ChatWithProxy(sender *op.Conversation, key string, c *gin.Context) (*op.Res
 			data = strings.TrimPrefix(line, "data:")
 			c.Writer.Write([]byte(line + "\n"))
 			c.Writer.Flush()
-			fmt.Println(data)
 		}
 	}
 	c.Writer.Write([]byte("data: [DONE]"))
 
 	var ret op.Response
 	err = json.Unmarshal([]byte(data), &ret)
-	if err != nil {
-		return nil, errors.WithStack(err)
+	if err != nil || ret.Code != "" {
+		return nil, errors.WithMessage(err, ret.Code)
 	}
 	return &ret, nil
 }

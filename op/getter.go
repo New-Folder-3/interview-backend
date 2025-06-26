@@ -1,6 +1,7 @@
 package op
 
 import (
+	"fmt"
 	"github.com/pkg/errors"
 	"interview-backend/internal/db"
 	"interview-backend/util"
@@ -42,6 +43,7 @@ func GetMessage(messageIDs []string) (*[]Message, error) {
 		}
 		contentIDs := util.DBToStringList(message.Contents)
 		contents, err := GetContent(contentIDs)
+		fmt.Println(messageID, contentIDs)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
@@ -60,9 +62,9 @@ func GetContent(contentIDs []string) (*[]Content, error) {
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		videos := util.DBToStringList(*content.Video)
 		var videoPtr *[]string
-		if len(videos) > 0 {
+		if content.Video != nil {
+			videos := util.DBToStringList(*content.Video)
 			videoPtr = &videos
 		} else {
 			videoPtr = nil

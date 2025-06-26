@@ -18,8 +18,11 @@ type UserRequest struct {
 	NewPwd   string `json:"newpwd" form:"newpwd"`
 }
 
-type MessageRequest struct {
-	ConversationID string     `json:"conversation_id" form:"conversation_id,required"`
+type ConversationRequest struct {
+	Username       string     `json:"username" form:"username"`
+	ConversationID string     `json:"conversation_id" form:"conversation_id"`
+	MessageID      string     `json:"message_id" form:"message_id"`
+	PreferRole     *int       `json:"prefer_role,omitempty" form:"prefer_role"`
 	Text           string     `json:"text,omitempty" form:"text"`
 	Audio          []string   `json:"audio,omitempty" form:"audio"`
 	Image          []string   `json:"image,omitempty" form:"image"`

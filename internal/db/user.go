@@ -10,11 +10,15 @@ func CreateUser(u *model.User) error {
 }
 
 func UpdateUser(u *model.User) error {
-	return db.Model(u).Updates(u).Error
+	return errors.WithStack(db.Model(u).Updates(u).Error)
 }
 
-func DeleteUser(u *model.User) error {
-	return errors.WithStack(db.Delete(u).Error)
+func ReplaceUser(u *model.User) error {
+	return errors.WithStack(db.Model(u).Save(u).Error)
+}
+
+func DeleteUser(userID string) error {
+	return errors.WithStack(db.Where("id = ?", userID).Delete(&model.User{}).Error)
 }
 
 func GetUser(info string) (*model.User, error) {
