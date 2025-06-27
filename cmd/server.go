@@ -33,9 +33,10 @@ var ServerCmd = &cobra.Command{
 func serverStart() {
 	Init()
 	config := cors.DefaultConfig()
+	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 	if !flags.Dev {
 		gin.SetMode(gin.ReleaseMode)
-		config.AllowMethods = []string{"GET", "POST"}
+		config.AllowMethods = []string{"GET", "POST", "DELETE"}
 	} else {
 		gin.SetMode(gin.DebugMode)
 		config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
@@ -43,6 +44,7 @@ func serverStart() {
 	}
 	r := gin.New()
 	r.Use(
+		server.RouterRecovery(),
 		gin.LoggerWithWriter(log.StandardLogger().Out),
 		gin.RecoveryWithWriter(log.StandardLogger().Out),
 		cors.New(config))

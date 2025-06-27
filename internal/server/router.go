@@ -7,16 +7,29 @@ import (
 	"interview-backend/internal/server/handles"
 	"interview-backend/internal/server/handles/middlewares"
 	"interview-backend/public"
+	"interview-backend/util"
 	"io/fs"
 	"net/http"
 	"path/filepath"
 )
 
+func RouterRecovery() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		defer func() {
+			if err := recover(); err != nil {
+				util.ErrorResp(c, "Internal Server Error", http.StatusInternalServerError, false)
+				c.Abort()
+			}
+		}()
+		c.Next()
+	}
+}
+
 func Init(e *gin.Engine) {
 	rootFS, _ := fs.Sub(public.StaticFS, "dist")
 	assetsFS, _ := fs.Sub(public.StaticFS, "dist/assets")
-	e.StaticFS("/assets", http.FS(assetsFS))
 	tpl := template.Must(template.ParseFS(rootFS, "*.html"))
+	e.StaticFS("/assets", http.FS(assetsFS))
 	e.SetHTMLTemplate(tpl)
 
 	api := e.Group("/api")
