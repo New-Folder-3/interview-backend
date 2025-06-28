@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"interview-backend/internal/db"
+	"interview-backend/op/chat"
 	"interview-backend/util"
 )
 
-func GetConversation(ConversationID string) (*Conversation, error) {
+func GetConversation(ConversationID string) (*chat.Conversation, error) {
 	conversation, err := db.GetConversation(ConversationID)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -17,12 +18,12 @@ func GetConversation(ConversationID string) (*Conversation, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	ret := &Conversation{
+	ret := &chat.Conversation{
 		Model: conversation.Model,
 		Input: struct {
-			Messages []Message `json:"messages"`
+			Messages []chat.Message `json:"messages"`
 		}{Messages: *messages},
-		Parameters: &Parameters{
+		Parameters: &chat.Parameters{
 			ResultFormat:      conversation.ResultFormat,
 			Temperature:       conversation.Temperature,
 			TopP:              conversation.TopP,
@@ -34,8 +35,8 @@ func GetConversation(ConversationID string) (*Conversation, error) {
 	return ret, nil
 }
 
-func GetMessage(messageIDs []string) (*[]Message, error) {
-	var ret []Message
+func GetMessage(messageIDs []string) (*[]chat.Message, error) {
+	var ret []chat.Message
 	for _, messageID := range messageIDs {
 		message, err := db.GetMessage(messageID)
 		if err != nil {
@@ -47,7 +48,7 @@ func GetMessage(messageIDs []string) (*[]Message, error) {
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		ret = append(ret, Message{
+		ret = append(ret, chat.Message{
 			Role:    message.Role,
 			Content: *contents,
 		})
@@ -55,8 +56,8 @@ func GetMessage(messageIDs []string) (*[]Message, error) {
 	return &ret, nil
 }
 
-func GetContent(contentIDs []string) (*[]Content, error) {
-	var ret []Content
+func GetContent(contentIDs []string) (*[]chat.Content, error) {
+	var ret []chat.Content
 	for _, contentID := range contentIDs {
 		content, err := db.GetContent(contentID)
 		if err != nil {
@@ -69,7 +70,7 @@ func GetContent(contentIDs []string) (*[]Content, error) {
 		} else {
 			videoPtr = nil
 		}
-		ret = append(ret, Content{
+		ret = append(ret, chat.Content{
 			Text:  content.Text,
 			Image: content.Image,
 			Video: videoPtr,

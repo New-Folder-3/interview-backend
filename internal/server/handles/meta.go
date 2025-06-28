@@ -10,7 +10,7 @@ type AuthRequest struct {
 }
 
 type UserRequest struct {
-	Username string `json:"username" form:"username"`
+	Username string `json:"username" form:"username" binding:"required"`
 	Nickname string `json:"nickname" form:"nickname"`
 	Email    string `json:"email" form:"email"`
 	Phone    string `json:"phone" form:"phone"`

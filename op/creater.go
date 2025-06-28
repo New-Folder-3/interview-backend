@@ -5,10 +5,11 @@ import (
 	"interview-backend/internal/conf"
 	"interview-backend/internal/db"
 	"interview-backend/internal/model"
+	"interview-backend/op/chat"
 	"interview-backend/util"
 )
 
-func CreateConversation(UserID string, c *Conversation, preferRole int) (string, error) {
+func CreateConversation(UserID string, c *chat.Conversation, preferRole int) (string, error) {
 	id := util.GenerateToken(16)
 	conversation := model.Conversation{
 		ID:         id,
@@ -62,7 +63,7 @@ func CreateMessage(ConversationID string, role int) (string, error) {
 	return id, nil
 }
 
-func CreateContent(MessageID string, c *Content) (string, error) {
+func CreateContent(MessageID string, c *chat.Content) (string, error) {
 	id := util.GenerateToken(16)
 	var videoPtr *string
 	if c.Video != nil {
@@ -97,7 +98,7 @@ func CreateContent(MessageID string, c *Content) (string, error) {
 
 func AddContent(MessageID, text string, images, audios []string, videos [][]string) error {
 	if text != "" {
-		_, err := CreateContent(MessageID, &Content{
+		_, err := CreateContent(MessageID, &chat.Content{
 			Text: &text,
 		})
 		if err != nil {
@@ -105,7 +106,7 @@ func AddContent(MessageID, text string, images, audios []string, videos [][]stri
 		}
 	}
 	for _, image := range images {
-		_, err := CreateContent(MessageID, &Content{
+		_, err := CreateContent(MessageID, &chat.Content{
 			Image: &image,
 		})
 		if err != nil {
@@ -113,7 +114,7 @@ func AddContent(MessageID, text string, images, audios []string, videos [][]stri
 		}
 	}
 	for _, audio := range audios {
-		_, err := CreateContent(MessageID, &Content{
+		_, err := CreateContent(MessageID, &chat.Content{
 			Audio: &audio,
 		})
 		if err != nil {
@@ -124,7 +125,7 @@ func AddContent(MessageID, text string, images, audios []string, videos [][]stri
 		if len(video) == 0 {
 			continue
 		}
-		_, err := CreateContent(MessageID, &Content{
+		_, err := CreateContent(MessageID, &chat.Content{
 			Video: &video,
 		})
 		if err != nil {

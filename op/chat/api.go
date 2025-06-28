@@ -1,4 +1,4 @@
-package aliyun
+package chat
 
 import (
 	"bufio"
@@ -8,12 +8,11 @@ import (
 	"github.com/pkg/errors"
 	"interview-backend/internal/client"
 	"interview-backend/internal/conf"
-	"interview-backend/op"
 	"net/http"
 	"strings"
 )
 
-func ChatWithProxy(sender *op.Conversation, key string, c *gin.Context) (*op.Response, error) {
+func ChatWithProxy(sender *Conversation, key string, c *gin.Context) (*Response, error) {
 	jsonPayload, _ := json.Marshal(*sender)
 	req, _ := http.NewRequest(http.MethodPost, conf.AliMDUrl, bytes.NewBuffer(jsonPayload))
 	req.Header.Set("Content-Type", "application/json")
@@ -40,7 +39,7 @@ func ChatWithProxy(sender *op.Conversation, key string, c *gin.Context) (*op.Res
 	}
 	c.Writer.Write([]byte("data: [DONE]"))
 
-	var ret op.Response
+	var ret Response
 	err = json.Unmarshal([]byte(data), &ret)
 	if err != nil || ret.Code != "" {
 		return nil, errors.WithMessage(err, ret.Code)

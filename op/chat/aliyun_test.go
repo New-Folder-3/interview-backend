@@ -1,4 +1,4 @@
-package aliyun
+package chat
 
 import (
 	"fmt"

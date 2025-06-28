@@ -9,7 +9,7 @@ import (
 
 func GetUser(c *gin.Context) {
 	var getRequest UserRequest
-	if err := c.ShouldBindJSON(&getRequest); err != nil {
+	if err := c.ShouldBind(&getRequest); err != nil {
 		util.ErrorPrinter(err)
 		util.ErrorResp(c, err.Error(), 400, false)
 		return
@@ -71,7 +71,7 @@ func UpdateUserPwd(c *gin.Context) {
 		util.ErrorResp(c, "Username mismatch", 400, false)
 		return
 	}
-	
+
 	user, err := db.GetUser(updatePwdRequest.Username)
 	if err != nil {
 		util.ErrorPrinter(err)
