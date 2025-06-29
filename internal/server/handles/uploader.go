@@ -34,7 +34,7 @@ func FileSaver(typ string) func(*gin.Context) {
 			util.ErrorResp(c, err.Error(), 500, false)
 		}
 
-		URL := conf.Conf.Schema.URL + path.Join("/api", typ, filename)
+		URL := conf.Conf.Schema.URL + path.Join("/api/download", typ, filename)
 		c.JSON(http.StatusOK, gin.H{
 			"url": URL,
 		})

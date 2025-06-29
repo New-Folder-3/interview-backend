@@ -41,8 +41,13 @@ func ChatWithProxy(sender *Conversation, key string, c *gin.Context) (*Response,
 
 	var ret Response
 	err = json.Unmarshal([]byte(data), &ret)
-	if err != nil || ret.Code != "" {
-		return nil, errors.WithMessage(err, ret.Code)
+	switch {
+	case err != nil:
+		return nil, errors.WithStack(err)
+	case ret.Code != "":
+		return nil, errors.WithStack(errors.New(ret.Code))
+	case len(ret.Output.Choices) == 0:
+		return nil, errors.WithStack(errors.New("No Valid Response"))
 	}
 	return &ret, nil
 }
