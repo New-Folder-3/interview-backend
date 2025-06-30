@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"interview-backend/internal/conf"
 	"interview-backend/op"
-	"interview-backend/op/chat"
 	"interview-backend/util"
 )
 
@@ -38,14 +37,14 @@ func CreateMessage(c *gin.Context) {
 		return
 	}
 
-	var response *chat.Response
+	var response *op.Response
 	switch {
 	case len(message.Audio) > 0:
-		response, err = chat.ChatWithProxy(conversation.AddAudio(txts...), conf.Conf.API.AliyunAPIKey, c)
+		response, err = op.CommonChat(conversation.AddAudio(txts...), conf.Conf.API.AliyunAPIKey, c)
 	case len(message.Image) > 0:
-		response, err = chat.ChatWithProxy(conversation.AddImg(txts...), conf.Conf.API.AliyunAPIKey, c)
+		response, err = op.CommonChat(conversation.AddImg(txts...), conf.Conf.API.AliyunAPIKey, c)
 	default:
-		response, err = chat.ChatWithProxy(conversation.AddText(message.Text, 1), conf.Conf.API.AliyunAPIKey, c)
+		response, err = op.CommonChat(conversation.AddText(message.Text, 1), conf.Conf.API.AliyunAPIKey, c)
 	}
 	if err != nil {
 		util.ErrorPrinter(err)

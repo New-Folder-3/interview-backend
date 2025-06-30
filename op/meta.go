@@ -1,4 +1,4 @@
-package chat
+package op
 
 type Conversation struct {
 	Model string `json:"model"`

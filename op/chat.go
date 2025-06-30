@@ -1,4 +1,4 @@
-package chat
+package op
 
 import (
 	"bufio"
@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-func ChatWithProxy(sender *Conversation, key string, c *gin.Context) (*Response, error) {
+func CommonChat(sender *Conversation, key string, c *gin.Context) (*Response, error) {
 	jsonPayload, _ := json.Marshal(*sender)
 	req, _ := http.NewRequest(http.MethodPost, conf.AliMDUrl, bytes.NewBuffer(jsonPayload))
 	req.Header.Set("Content-Type", "application/json")

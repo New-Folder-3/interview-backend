@@ -1,4 +1,4 @@
-package chat
+package op
 
 import (
 	"interview-backend/internal/conf"

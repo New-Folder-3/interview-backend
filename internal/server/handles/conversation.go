@@ -5,7 +5,6 @@ import (
 	"interview-backend/internal/conf"
 	"interview-backend/internal/db"
 	"interview-backend/op"
-	"interview-backend/op/chat"
 	"interview-backend/util"
 )
 
@@ -75,7 +74,7 @@ func CreateConversation(c *gin.Context) {
 		return
 	}
 	prompt := conf.SysPrompt[*request.PreferRole]
-	conversation := chat.NewConversation().AddText(prompt, 0)
+	conversation := op.NewConversation().AddText(prompt, 0)
 	conversationID, err := op.CreateConversation(request.Username, conversation, *request.PreferRole)
 	request.ConversationID = conversationID
 	if err != nil {
@@ -89,7 +88,7 @@ func CreateConversation(c *gin.Context) {
 		util.ErrorResp(c, err.Error(), 500, false)
 		return
 	}
-	_, err = op.CreateContent(messageID, &chat.Content{
+	_, err = op.CreateContent(messageID, &op.Content{
 		Text: &prompt,
 	})
 	if err != nil {
