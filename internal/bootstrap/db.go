@@ -9,8 +9,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
-	"interview-backend/internal/conf"
-	"interview-backend/internal/db"
+	"interview/internal/conf"
+	"interview/internal/db"
 	stdlog "log"
 	"strings"
 	"time"
@@ -75,7 +75,7 @@ func InitDB() {
 	default:
 		log.Fatalf("Invalid database type: %s", dbConf.Type)
 	}
-	
+
 	if err != nil {
 		log.Fatalf("failed to connect database:%s", err.Error())
 	}

@@ -2,8 +2,8 @@ package op
 
 import (
 	"github.com/pkg/errors"
-	"interview-backend/internal/db"
-	"interview-backend/util"
+	"interview/internal/db"
+	"interview/util"
 )
 
 func DeleteConversation(ConversationID string) error {

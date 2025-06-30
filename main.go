@@ -1,6 +1,6 @@
 package main
 
-import "interview-backend/cmd"
+import "interview/cmd"
 
 func main() {
 	cmd.Execute()

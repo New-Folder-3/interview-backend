@@ -2,7 +2,7 @@ package util
 
 import (
 	"fmt"
-	"interview-backend/internal/conf"
+	"interview/internal/conf"
 	"strings"
 )
 

@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"interview-backend/cmd/flags"
+	"interview/cmd/flags"
 	"os"
 )
 

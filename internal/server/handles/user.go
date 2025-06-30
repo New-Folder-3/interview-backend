@@ -2,8 +2,8 @@ package handles
 
 import (
 	"github.com/gin-gonic/gin"
-	"interview-backend/internal/db"
-	"interview-backend/util"
+	"interview/internal/db"
+	"interview/util"
 	"time"
 )
 

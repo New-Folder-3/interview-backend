@@ -13,7 +13,7 @@ var StartCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Silent start",
 	Run: func(cmd *cobra.Command, args []string) {
-
+		start()
 	},
 }
 

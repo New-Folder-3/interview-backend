@@ -2,10 +2,10 @@ package handles
 
 import (
 	"github.com/gin-gonic/gin"
-	"interview-backend/internal/conf"
-	"interview-backend/internal/db"
-	"interview-backend/op"
-	"interview-backend/util"
+	"interview/internal/conf"
+	"interview/internal/db"
+	"interview/op"
+	"interview/util"
 )
 
 func GetAllConversations(c *gin.Context) {

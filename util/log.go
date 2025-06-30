@@ -14,7 +14,7 @@ func ErrorPrinter(err error) {
 		stackTrace := fmt.Sprintf("%+v", err)
 		lines := strings.Split(stackTrace, "\n")
 		for _, line := range lines {
-			if strings.Contains(line, "interview-backend") {
+			if strings.Contains(line, "interview") {
 				log.Errorln(line)
 			}
 		}

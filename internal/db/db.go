@@ -4,8 +4,8 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
-	"interview-backend/internal/conf"
-	"interview-backend/internal/model"
+	"interview/internal/conf"
+	"interview/internal/model"
 )
 
 var db *gorm.DB

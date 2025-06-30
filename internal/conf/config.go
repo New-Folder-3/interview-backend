@@ -1,7 +1,7 @@
 package conf
 
 import (
-	"interview-backend/cmd/flags"
+	"interview/cmd/flags"
 	"path/filepath"
 )
 

@@ -2,9 +2,9 @@ package cmd
 
 import (
 	log "github.com/sirupsen/logrus"
-	"interview-backend/internal/bootstrap"
-	"interview-backend/internal/db"
-	"interview-backend/util"
+	"interview/internal/bootstrap"
+	"interview/internal/db"
+	"interview/util"
 	"os"
 	"path/filepath"
 	"strconv"

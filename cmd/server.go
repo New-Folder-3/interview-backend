@@ -8,15 +8,14 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"interview-backend/cmd/flags"
-	"interview-backend/internal/client"
-	"interview-backend/internal/conf"
-	"interview-backend/internal/server"
-	"interview-backend/util"
+	"interview/cmd/flags"
+	"interview/internal/client"
+	"interview/internal/conf"
+	"interview/internal/server"
+	"interview/util"
 	"net/http"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 	"time"
 )
@@ -34,20 +33,22 @@ func serverStart() {
 	Init()
 	config := cors.DefaultConfig()
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
+	var r *gin.Engine
 	if !flags.Dev {
 		gin.SetMode(gin.ReleaseMode)
-		config.AllowMethods = []string{"GET", "POST", "DELETE"}
+		r = gin.New()
 	} else {
 		gin.SetMode(gin.DebugMode)
+		r = gin.New()
 		config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
 		config.AllowAllOrigins = true
+		r.Use(cors.New(config))
 	}
-	r := gin.New()
 	r.Use(
 		server.RouterRecovery(),
 		gin.LoggerWithWriter(log.StandardLogger().Out),
-		gin.RecoveryWithWriter(log.StandardLogger().Out),
-		cors.New(config))
+		gin.RecoveryWithWriter(log.StandardLogger().Out))
+
 	server.Init(r)
 	client.Init()
 
@@ -72,21 +73,14 @@ func serverStart() {
 	<-quit
 	util.Log.Infof("Shutting down server")
 	Release()
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second) //创建一个context，用于优雅地关闭gin
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			if err := httpServer.Shutdown(ctx); err != nil {
-				util.Log.Fatalf("Failed to shutdown server: %v", err)
-			}
-		}()
-	}()
-	wg.Wait()
+
+	if err := httpServer.Shutdown(ctx); err != nil {
+		util.Log.Fatalf("Failed to shutdown server: %v", err)
+	}
 	util.Log.Infof("Server gracefully stopped")
+
 }
 
 func init() {

@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
-	"interview-backend/internal/client"
-	"interview-backend/internal/conf"
+	"interview/internal/client"
+	"interview/internal/conf"
 	"net/http"
 	"strings"
 )

@@ -1,7 +1,7 @@
 package op
 
 import (
-	"interview-backend/internal/conf"
+	"interview/internal/conf"
 	"strings"
 )
 

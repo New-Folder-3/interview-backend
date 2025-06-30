@@ -3,11 +3,11 @@ package server
 import (
 	"github.com/gin-gonic/gin"
 	"html/template"
-	"interview-backend/cmd/flags"
-	"interview-backend/internal/server/handles"
-	"interview-backend/internal/server/handles/middlewares"
-	"interview-backend/public"
-	"interview-backend/util"
+	"interview/cmd/flags"
+	"interview/internal/server/handles"
+	"interview/internal/server/handles/middlewares"
+	"interview/public"
+	"interview/util"
 	"io/fs"
 	"net/http"
 	"path/filepath"
@@ -29,7 +29,6 @@ func Init(e *gin.Engine) {
 	rootFS, _ := fs.Sub(public.StaticFS, "dist")
 	assetsFS, _ := fs.Sub(public.StaticFS, "dist/assets")
 	tpl := template.Must(template.ParseFS(rootFS, "*.html"))
-	e.StaticFS("/assets", http.FS(assetsFS))
 	e.SetHTMLTemplate(tpl)
 
 	api := e.Group("/api")
@@ -58,6 +57,7 @@ func Init(e *gin.Engine) {
 	download.Static("/image", filepath.Join(flags.DataDir, "image"))
 	download.Static("/audio", filepath.Join(flags.DataDir, "audio"))
 
+	e.StaticFS("/assets", http.FS(assetsFS))
 	e.NoRoute(middlewares.APINoRoute, StaticHandler)
 }
 

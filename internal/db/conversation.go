@@ -2,7 +2,7 @@ package db
 
 import (
 	"github.com/pkg/errors"
-	"interview-backend/internal/model"
+	"interview/internal/model"
 )
 
 func GetConversation(ConversationID string) (*model.Conversation, error) {

@@ -2,9 +2,9 @@ package handles
 
 import (
 	"github.com/gin-gonic/gin"
-	"interview-backend/internal/conf"
-	"interview-backend/op"
-	"interview-backend/util"
+	"interview/internal/conf"
+	"interview/op"
+	"interview/util"
 )
 
 func CreateMessage(c *gin.Context) {

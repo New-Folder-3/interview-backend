@@ -1,8 +1,8 @@
 package bootstrap
 
 import (
-	"interview-backend/cmd/flags"
-	"interview-backend/util"
+	"interview/cmd/flags"
+	"interview/util"
 	"path/filepath"
 )
 

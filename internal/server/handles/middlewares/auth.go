@@ -2,8 +2,8 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	"interview-backend/internal/db"
-	"interview-backend/util"
+	"interview/internal/db"
+	"interview/util"
 	"net/http"
 	"strings"
 )

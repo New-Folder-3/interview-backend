@@ -2,10 +2,10 @@ package op
 
 import (
 	"github.com/pkg/errors"
-	"interview-backend/internal/conf"
-	"interview-backend/internal/db"
-	"interview-backend/internal/model"
-	"interview-backend/util"
+	"interview/internal/conf"
+	"interview/internal/db"
+	"interview/internal/model"
+	"interview/util"
 )
 
 func CreateConversation(UserID string, c *Conversation, preferRole int) (string, error) {

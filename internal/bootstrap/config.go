@@ -3,9 +3,9 @@ package bootstrap
 import (
 	"encoding/json"
 	log "github.com/sirupsen/logrus"
-	"interview-backend/cmd/flags"
-	"interview-backend/internal/conf"
-	"interview-backend/util"
+	"interview/cmd/flags"
+	"interview/internal/conf"
+	"interview/util"
 	"os"
 	"path/filepath"
 )

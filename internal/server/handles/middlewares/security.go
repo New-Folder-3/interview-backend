@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	"interview-backend/util"
+	"interview/util"
 	"io"
 	"net/http"
 	"strings"
