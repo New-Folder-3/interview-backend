@@ -13,6 +13,9 @@ import (
 )
 
 func CommonChat(sender *Conversation, key string, c *gin.Context) (*Response, error) {
+	if key == "" {
+		return nil, errors.New("API Key is required")
+	}
 	jsonPayload, _ := json.Marshal(*sender)
 	req, _ := http.NewRequest(http.MethodPost, conf.AliMDUrl, bytes.NewBuffer(jsonPayload))
 	req.Header.Set("Content-Type", "application/json")

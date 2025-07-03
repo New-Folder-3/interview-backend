@@ -12,7 +12,7 @@ func LoginPwdHandle(c *gin.Context) {
 	var loginRequest AuthRequest
 	if err := c.ShouldBind(&loginRequest); err != nil {
 		util.ErrorPrinter(err)
-		util.ErrorResp(c, err.Error(), 400, false)
+		util.ErrorResp(c, err.Error(), 400)
 		return
 	}
 	var userInfo string
@@ -26,7 +26,7 @@ func LoginPwdHandle(c *gin.Context) {
 	}
 	user, err := db.GetUser(userInfo)
 	if err != nil {
-		util.ErrorResp(c, err.Error(), 400, false)
+		util.ErrorResp(c, err.Error(), 400)
 	}
 	if user.PwdHash == loginRequest.PwdHash {
 		newToken := model.Token{
@@ -40,13 +40,13 @@ func LoginPwdHandle(c *gin.Context) {
 		}
 		if err := db.CreateToken(&newToken); err != nil {
 			util.ErrorPrinter(err)
-			util.ErrorResp(c, err.Error(), 400, false)
+			util.ErrorResp(c, err.Error(), 400)
 			return
 		}
 		util.SuccessResp(c, newToken, "Login successful")
 	} else {
 		util.ErrorPrinter(err)
-		util.ErrorResp(c, "Invalid credentials", 400, false)
+		util.ErrorResp(c, "Invalid credentials", 400)
 		return
 	}
 }
@@ -55,13 +55,13 @@ func LoginTokenHandle(c *gin.Context) {
 	var loginRequest AuthRequest
 	if err := c.ShouldBind(&loginRequest); err != nil {
 		util.ErrorPrinter(err)
-		util.ErrorResp(c, err.Error(), 400, false)
+		util.ErrorResp(c, err.Error(), 400)
 		return
 	}
 	token, err := db.GetToken(loginRequest.Token)
 	if err != nil {
 		util.ErrorPrinter(err)
-		util.ErrorResp(c, "Invalid credentials", 400, false)
+		util.ErrorResp(c, "Invalid credentials", 400)
 	} else {
 		util.SuccessResp(c, token, "Login successful")
 	}
@@ -71,12 +71,12 @@ func LogoutHandle(c *gin.Context) {
 	var logoutRequest AuthRequest
 	if err := c.ShouldBind(&logoutRequest); err != nil {
 		util.ErrorPrinter(err)
-		util.ErrorResp(c, err.Error(), 400, false)
+		util.ErrorResp(c, err.Error(), 400)
 		return
 	}
 	if err := db.DeleteToken(logoutRequest.Token); err != nil {
 		util.ErrorPrinter(err)
-		util.ErrorResp(c, "Unable to logout", 400, false)
+		util.ErrorResp(c, "Unable to logout", 400)
 	} else {
 		util.SuccessResp(c, nil, "Logged out successfully")
 	}
@@ -86,7 +86,7 @@ func RegisterHandle(c *gin.Context) {
 	var registerRequest AuthRequest
 	if err := c.ShouldBindJSON(&registerRequest); err != nil {
 		util.ErrorPrinter(err)
-		util.ErrorResp(c, err.Error(), 400, false)
+		util.ErrorResp(c, err.Error(), 400)
 		return
 	}
 	user := model.User{
@@ -99,7 +99,7 @@ func RegisterHandle(c *gin.Context) {
 	}
 	if err := db.CreateUser(&user); err != nil {
 		util.ErrorPrinter(err)
-		util.ErrorResp(c, err.Error(), 400, false)
+		util.ErrorResp(c, err.Error(), 400)
 	} else {
 		util.SuccessResp(c, user, "Register successful")
 	}

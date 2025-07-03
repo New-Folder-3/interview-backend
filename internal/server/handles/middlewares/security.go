@@ -27,7 +27,7 @@ func FileChecker(typ string) func(c *gin.Context) {
 		file, header, err := c.Request.FormFile("file")
 		if err != nil {
 			util.ErrorPrinter(err)
-			util.ErrorResp(c, err.Error(), 400, false)
+			util.ErrorResp(c, err.Error(), 400)
 			c.Abort()
 			return
 		}
@@ -36,20 +36,20 @@ func FileChecker(typ string) func(c *gin.Context) {
 		_, err = file.Read(buf)
 		if err != nil && err != io.EOF {
 			util.ErrorPrinter(err)
-			util.ErrorResp(c, err.Error(), 400, false)
+			util.ErrorResp(c, err.Error(), 400)
 			c.Abort()
 		}
 		mimeType := http.DetectContentType(buf)
 		switch typ {
 		case "image":
 			if mimeType != "image/jpeg" && mimeType != "image/png" {
-				util.ErrorResp(c, "Not a valid image type", 400, false)
+				util.ErrorResp(c, "Not a valid image type", 400)
 				c.Abort()
 				return
 			}
 		case "audio":
 			if mimeType != "audio/mpeg" && mimeType != "audio/wav" {
-				util.ErrorResp(c, "Not a valid audio type", 400, false)
+				util.ErrorResp(c, "Not a valid audio type", 400)
 				c.Abort()
 				return
 			}

@@ -12,13 +12,13 @@ func Auth(c *gin.Context) {
 	token := c.Request.Header.Get("Authorization")
 	token, ok := strings.CutPrefix(token, "Bearer ")
 	if !ok || len(token) == 0 {
-		util.ErrorResp(c, "Empty Token", http.StatusUnauthorized, false)
+		util.ErrorResp(c, "Empty Token", http.StatusUnauthorized)
 		c.Abort()
 		return
 	}
 	tokenDB, err := db.GetToken(token)
 	if err != nil {
-		util.ErrorResp(c, "Unauthorized", http.StatusUnauthorized, false)
+		util.ErrorResp(c, "Unauthorized", http.StatusUnauthorized)
 		c.Abort()
 		return
 	}

@@ -1,52 +1,29 @@
-panic: conflict settings: all origins disabled
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
 
-goroutine 1 [running]:
-github.com/gin-contrib/cors.newCors({0x0, {0x0, 0x0, 0x0}, 0x0, 0x0, {0x140003ccb40, 0x3, 0x3}, 0x0, ...})
-	/Users/stephenzeng/go/pkg/mod/github.com/gin-contrib/cors@v1.7.6/config.go:45 +0x22c
-github.com/gin-contrib/cors.New({0x0, {0x0, 0x0, 0x0}, 0x0, 0x0, {0x140003ccb40, 0x3, 0x3}, 0x0, ...})
-	/Users/stephenzeng/go/pkg/mod/github.com/gin-contrib/cors@v1.7.6/cors.go:204 +0x3c
-interview/cmd.serverStart()
-	/Users/stephenzeng/Repo/interview/cmd/server.go:49 +0x3e4
-interview/cmd.init.func1(0x14000270a00?, {0x1032dbd27?, 0x4?, 0x1032dbd2b?})
-	/Users/stephenzeng/Repo/interview/cmd/server.go:28 +0x1c
-github.com/spf13/cobra.(*Command).execute(0x103f4e000, {0x103f87d60, 0x0, 0x0})
-	/Users/stephenzeng/go/pkg/mod/github.com/spf13/cobra@v1.9.1/command.go:1019 +0x82c
-github.com/spf13/cobra.(*Command).ExecuteC(0x103f4dd40)
-	/Users/stephenzeng/go/pkg/mod/github.com/spf13/cobra@v1.9.1/command.go:1148 +0x384
-github.com/spf13/cobra.(*Command).Execute(...)
-	/Users/stephenzeng/go/pkg/mod/github.com/spf13/cobra@v1.9.1/command.go:1071
-interview/cmd.Execute()
-	/Users/stephenzeng/Repo/interview/cmd/root.go:17 +0x24
-main.main()
-	/Users/stephenzeng/Repo/interview/main.go:6 +0x1c
-time="2025-06-30T21:39:41+08:00" level=fatal msg="failed to connect database:unable to open database file: no such file or directory"
-time="2025-06-30T21:39:51+08:00" level=fatal msg="failed to connect database:unable to open database file: no such file or directory"
-panic: conflict settings: all origins disabled
-
-goroutine 1 [running]:
-github.com/gin-contrib/cors.newCors({0x0, {0x0, 0x0, 0x0}, 0x0, 0x0, {0x1400037eb40, 0x3, 0x3}, 0x0, ...})
-	/Users/stephenzeng/go/pkg/mod/github.com/gin-contrib/cors@v1.7.6/config.go:45 +0x22c
-github.com/gin-contrib/cors.New({0x0, {0x0, 0x0, 0x0}, 0x0, 0x0, {0x1400037eb40, 0x3, 0x3}, 0x0, ...})
-	/Users/stephenzeng/go/pkg/mod/github.com/gin-contrib/cors@v1.7.6/cors.go:204 +0x3c
-interview/cmd.serverStart()
-	/Users/stephenzeng/Repo/interview-backend/cmd/server.go:49 +0x3e4
-interview/cmd.init.func2(0x14000294a00?, {0x104f180a3?, 0x4?, 0x104f180a7?})
-	/Users/stephenzeng/Repo/interview-backend/cmd/server.go:28 +0x1c
-github.com/spf13/cobra.(*Command).execute(0x105b8a300, {0x105bc4320, 0x0, 0x0})
-	/Users/stephenzeng/go/pkg/mod/github.com/spf13/cobra@v1.9.1/command.go:1019 +0x82c
-github.com/spf13/cobra.(*Command).ExecuteC(0x105b8a040)
-	/Users/stephenzeng/go/pkg/mod/github.com/spf13/cobra@v1.9.1/command.go:1148 +0x384
-github.com/spf13/cobra.(*Command).Execute(...)
-	/Users/stephenzeng/go/pkg/mod/github.com/spf13/cobra@v1.9.1/command.go:1071
-interview/cmd.Execute()
-	/Users/stephenzeng/Repo/interview-backend/cmd/root.go:17 +0x24
-main.main()
-	/Users/stephenzeng/Repo/interview-backend/main.go:6 +0x1c
-time="2025-06-30T21:47:55+08:00" level=info msg="Starting HTTP server on 127.0.0.1:2233"
-time="2025-06-30T21:47:59+08:00" level=info msg="Shutting down server"
-time="2025-06-30T21:47:59+08:00" level=info msg="closing database"
-time="2025-06-30T21:47:59+08:00" level=info msg="Server gracefully stopped"
-time="2025-06-30T21:48:02+08:00" level=info msg="Starting HTTP server on 127.0.0.1:2233"
-time="2025-06-30T21:48:08+08:00" level=info msg="Shutting down server"
-time="2025-06-30T21:48:08+08:00" level=info msg="closing database"
-time="2025-06-30T21:48:08+08:00" level=info msg="Server gracefully stopped"
+[GIN-debug] POST   /api/auth/login/pwd       --> interview/internal/server/handles.LoginPwdHandle (5 handlers)
+[GIN-debug] POST   /api/auth/login/token     --> interview/internal/server/handles.LoginTokenHandle (5 handlers)
+[GIN-debug] POST   /api/auth/register        --> interview/internal/server/handles.RegisterHandle (5 handlers)
+[GIN-debug] POST   /api/auth/logout          --> interview/internal/server/handles.LogoutHandle (5 handlers)
+[GIN-debug] POST   /api/upload/image         --> interview/internal/server.Init.FileSaver.func2 (7 handlers)
+[GIN-debug] POST   /api/upload/audio         --> interview/internal/server.Init.FileSaver.func4 (7 handlers)
+[GIN-debug] GET    /api/user/get             --> interview/internal/server/handles.GetUser (6 handlers)
+[GIN-debug] POST   /api/user/update/info     --> interview/internal/server/handles.UpdateUserInfo (6 handlers)
+[GIN-debug] POST   /api/user/update/pwd      --> interview/internal/server/handles.UpdateUserPwd (6 handlers)
+[GIN-debug] GET    /api/conversation/all     --> interview/internal/server/handles.GetAllConversations (6 handlers)
+[GIN-debug] GET    /api/conversation/get     --> interview/internal/server/handles.GetConversation (6 handlers)
+[GIN-debug] POST   /api/conversation/new     --> interview/internal/server/handles.CreateConversation (6 handlers)
+[GIN-debug] DELETE /api/conversation/del     --> interview/internal/server/handles.DeleteConversation (6 handlers)
+[GIN-debug] POST   /api/message/new          --> interview/internal/server/handles.CreateMessage (6 handlers)
+[GIN-debug] DELETE /api/message/del          --> interview/internal/server/handles.DeleteMessage (6 handlers)
+[GIN-debug] GET    /api/download/image/*filepath --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (5 handlers)
+[GIN-debug] HEAD   /api/download/image/*filepath --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (5 handlers)
+[GIN-debug] GET    /api/download/audio/*filepath --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (5 handlers)
+[GIN-debug] HEAD   /api/download/audio/*filepath --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (5 handlers)
+[GIN-debug] GET    /assets/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (5 handlers)
+[GIN-debug] HEAD   /assets/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (5 handlers)
+time="2025-06-30T21:59:44+08:00" level=info msg="Starting HTTP server on 127.0.0.1:2233"
+time="2025-06-30T21:59:54+08:00" level=info msg="Shutting down server"
+time="2025-06-30T21:59:54+08:00" level=info msg="closing database"
+time="2025-06-30T21:59:54+08:00" level=info msg="Server gracefully stopped"

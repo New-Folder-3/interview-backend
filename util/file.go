@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	sampleRate    = 16000
+	sampleRate    = 22100
 	bitsPerSample = 16
 	numChannels   = 1
 	wavHeaderSize = 44
