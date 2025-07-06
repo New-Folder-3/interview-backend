@@ -1,16 +1,16 @@
 package realtime
 
-type RealtimeRequest struct {
+type Request struct {
 	EventID string `json:"event_id"`
 	Type    string `json:"type"`
 
-	Audio    string          `json:"audio"`
-	Image    string          `json:"image"`
-	Session  *RequestSession `json:"session"`
-	Response *interface{}    `json:"response"`
+	Audio    string      `json:"audio"`
+	Image    string      `json:"image"`
+	Session  Session     `json:"session,omitempty"`
+	Response interface{} `json:"response,omitempty"`
 }
 
-type RequestSession struct {
+type Session struct {
 	Modalities        []string             `json:"modalities"`
 	Voice             string               `json:"voice"`
 	InputAudioFormat  string               `json:"input_audio_format"`
@@ -26,7 +26,7 @@ type RequestTurnDetection struct {
 	InterruptResponse bool    `json:"interrupt_response"`
 }
 
-type RealtimeResponse struct {
+type Response struct {
 	EventID      string `json:"event_id"`
 	Type         string `json:"type"`
 	ItemID       string `json:"item_id"`

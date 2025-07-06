@@ -51,6 +51,7 @@ func Init(e *gin.Engine) {
 	conversation.GET("/all", middlewares.Auth, handles.GetAllConversations)
 	conversation.GET("/get", middlewares.Auth, handles.GetConversation)
 	conversation.POST("/new", middlewares.Auth, handles.CreateConversation)
+	conversation.GET("/realtime", middlewares.Auth, handles.Realtime)
 	conversation.DELETE("/del", middlewares.Auth, handles.DeleteConversation)
 	message.POST("/new", middlewares.Auth, handles.CreateMessage)
 	message.DELETE("/del", middlewares.Auth, handles.DeleteMessage)

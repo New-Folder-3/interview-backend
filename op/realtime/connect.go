@@ -1,9 +1,11 @@
 package realtime
 
 import (
+	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"interview/cmd/flags"
 	"interview/internal/conf"
 	"interview/op"
@@ -12,9 +14,7 @@ import (
 	"path"
 )
 
-var (
-	userAudioName = ""
-)
+var userAudioName map[string]string
 
 func RemoteToFrontend(done chan error, remote *websocket.Conn, frontend *websocket.Conn, conversationIDChan chan string, userID string) {
 	defer close(done)
@@ -25,56 +25,71 @@ func RemoteToFrontend(done chan error, remote *websocket.Conn, frontend *websock
 		done <- errors.WithStack(err)
 		return
 	}
-	var ret RealtimeResponse
+	var ret Response
 	for {
-		err = remote.ReadJSON(&ret)
-		if err != nil || !websocket.IsCloseError(err, websocket.CloseNormalClosure) {
+		msgType, ori, err := remote.ReadMessage()
+		if err != nil {
 			done <- errors.WithStack(err)
 			return
 		}
-		switch ret.Type {
-		case "input_audio_buffer.speech_started":
-			userAudioName = uuid.NewString() + ".wav"
-		case "input_audio_buffer.speech_stopped":
-			audioName := userAudioName
-			userAudioName = ""
-			userAudioURL, _ := url.JoinPath(conf.Conf.Schema.URL + "download/audio" + audioName)
-			err = util.StreamWritePCMBase64ToWav(path.Join(flags.DataDir, "audio", audioName), "", true)
+		if msgType == websocket.TextMessage {
+			err = json.Unmarshal(ori, &ret)
 			if err != nil {
 				util.ErrorPrinter(errors.WithStack(err))
-			} else {
-				conversation.AddAudio(userAudioURL)
 			}
-		case "response.text.done":
-			conversation.AddText(ret.Text, 2)
-		case "response.audio_transcript.done":
-			conversation.AddText(ret.Part.Text, 2)
+			switch ret.Type {
+			case "input_audio_buffer.speech_started":
+				userAudioName[conversationID] = uuid.NewString() + ".wav"
+			case "input_audio_buffer.speech_stopped":
+				audioName := userAudioName[conversationID]
+				userAudioName[conversationID] = ""
+				userAudioURL, _ := url.JoinPath(conf.Conf.Schema.URL + "download/audio" + audioName)
+				err = util.StreamWritePCMBase64ToWav(path.Join(flags.DataDir, "audio", audioName), "", true)
+				if err != nil {
+					util.ErrorPrinter(errors.WithStack(err))
+				} else {
+					conversation.AddAudio(userAudioURL)
+				}
+			case "response.text.done":
+				conversation.AddText(ret.Text, 2)
+			case "response.audio_transcript.done":
+				conversation.AddText(ret.Part.Text, 2)
+			}
 		}
-		err = frontend.WriteJSON(ret)
-		if err != nil || !websocket.IsCloseError(err, websocket.CloseNormalClosure) {
+		err = frontend.WriteMessage(msgType, ori)
+		if err != nil {
 			done <- errors.WithStack(err)
 			return
 		}
 	}
 }
 
-func FrontendToRemote(done chan error, remote *websocket.Conn, frontend *websocket.Conn) {
+func FrontendToRemote(done chan error, remote *websocket.Conn, frontend *websocket.Conn, conversationID string) {
 	defer close(done)
+	var ret Request
 	for {
-		var ret RealtimeRequest
-		err := frontend.ReadJSON(&ret)
-		if err != nil || !websocket.IsCloseError(err, websocket.CloseNormalClosure) {
+		msgType, ori, err := frontend.ReadMessage()
+		if err != nil {
 			done <- errors.WithStack(err)
 			return
 		}
-		switch ret.Type {
-		case "input_audio_buffer.append":
-			if userAudioName != "" {
-				_ = util.StreamWritePCMBase64ToWav(path.Join(flags.DataDir, "audio", userAudioName), ret.Audio, false)
+		audioName, ok := userAudioName[conversationID]
+		if msgType == websocket.TextMessage {
+			err = json.Unmarshal(ori, &ret)
+			if err != nil {
+				util.ErrorPrinter(errors.WithStack(err))
+			}
+			util.StructPrinter(ret, 0)
+			switch ret.Type {
+			case "input_audio_buffer.append":
+				if audioName != "" && ok {
+					_ = util.StreamWritePCMBase64ToWav(path.Join(flags.DataDir, "audio", audioName), ret.Audio, false)
+				}
 			}
 		}
-		err = remote.WriteJSON(ret)
-		if err != nil || !websocket.IsCloseError(err, websocket.CloseNormalClosure) {
+		log.Printf("Sending message type:%d size:%d\n", msgType, len(ori))
+		err = remote.WriteMessage(msgType, ori)
+		if err != nil {
 			done <- errors.WithStack(err)
 			return
 		}

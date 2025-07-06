@@ -3,6 +3,8 @@ package conf
 var (
 	Conf     *Config
 	AliMDUrl = "https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation"
+	AliWSUrl = "wss://dashscope.aliyuncs.com/api-ws/v1/realtime"
+	//AliWSUrl = "ws://localhost:8765"
 )
 
 // 0: 面试官

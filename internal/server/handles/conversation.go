@@ -78,20 +78,6 @@ func CreateConversation(c *gin.Context) {
 		util.ErrorResp(c, err.Error(), 500)
 		return
 	}
-	messageID, err := op.CreateMessage(conversationID, 0)
-	if err != nil {
-		util.ErrorPrinter(err)
-		util.ErrorResp(c, err.Error(), 500)
-		return
-	}
-	_, err = op.CreateContent(messageID, &op.Content{
-		Text: &prompt,
-	})
-	if err != nil {
-		util.ErrorPrinter(err)
-		util.ErrorResp(c, err.Error(), 500)
-		return
-	}
 	util.SuccessResp(c, request, "Create Conversation Successfully")
 }
 

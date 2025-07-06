@@ -1,6 +1,7 @@
 package util
 
 import (
+	"encoding/json"
 	"fmt"
 	"interview/internal/conf"
 	"strings"
@@ -53,4 +54,12 @@ func RemoveFromDBList(dbList string, item string) string {
 		}
 	}
 	return StringListToDB(result)
+}
+
+func MapToStruct(m map[string]interface{}, out interface{}) error {
+	bytes, err := json.Marshal(m)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bytes, out)
 }

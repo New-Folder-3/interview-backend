@@ -36,6 +36,17 @@ func CreateConversation(UserID string, c *Conversation, preferRole int) (string,
 	if err != nil {
 		return "", errors.WithStack(err)
 	}
+
+	messageID, err := CreateMessage(id, 0)
+	if err != nil {
+		return "", errors.WithStack(err)
+	}
+	_, err = CreateContent(messageID, &Content{
+		Text: &conf.SysPrompt[preferRole],
+	})
+	if err != nil {
+		return "", errors.WithStack(err)
+	}
 	return id, nil
 }
 
