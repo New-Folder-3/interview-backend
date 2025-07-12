@@ -89,14 +89,14 @@ func RegisterHandle(c *gin.Context) {
 		util.ErrorResp(c, err.Error(), 400)
 		return
 	}
-	user := model.User{
-		ID:      registerRequest.Username,
-		Name:    registerRequest.Username,
-		PwdHash: registerRequest.PwdHash,
-		Email:   registerRequest.Email,
-		Phone:   registerRequest.Phone,
-		PwdTS:   time.Now().Unix(),
-	}
+
+	user := model.NewDefaultUser()
+	user.Name = registerRequest.Username
+	user.PwdHash = registerRequest.PwdHash
+	user.Email = registerRequest.Email
+	user.Phone = registerRequest.Phone
+	user.PwdTS = time.Now().Unix()
+
 	if err := db.CreateUser(&user); err != nil {
 		util.ErrorPrinter(err)
 		util.ErrorResp(c, err.Error(), 400)

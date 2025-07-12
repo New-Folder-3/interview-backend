@@ -23,6 +23,8 @@ func FileChecker(typ string) func(c *gin.Context) {
 			c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, 5<<20)
 		case "audio":
 			c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, 10<<20)
+		case "video":
+			c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, 100<<20)
 		}
 		file, header, err := c.Request.FormFile("file")
 		if err != nil {
@@ -50,6 +52,18 @@ func FileChecker(typ string) func(c *gin.Context) {
 		case "audio":
 			if mimeType != "audio/mpeg" && mimeType != "audio/wav" {
 				util.ErrorResp(c, "Not a valid audio type", 400)
+				c.Abort()
+				return
+			}
+		case "video":
+			if mimeType != "video/webm" {
+				util.ErrorResp(c, "Not a valid video type", 400)
+				c.Abort()
+				return
+			}
+		default:
+			{
+				util.ErrorResp(c, "Unsupported file type", 400)
 				c.Abort()
 				return
 			}

@@ -28,7 +28,7 @@ func FileSaver(typ string) func(*gin.Context) {
 		filename := fmt.Sprintf("%s%s", uuid.New().String(), ext)
 		filePath := filepath.Join(flags.DataDir, typ, filename)
 
-		err := util.SaveUploadFile(filePath, header, &file)
+		err := util.SaveUploadFile(filePath, &file)
 		if err != nil {
 			util.ErrorPrinter(err)
 			util.ErrorResp(c, err.Error(), 500)

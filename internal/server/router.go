@@ -39,25 +39,38 @@ func Init(e *gin.Engine) {
 	message := api.Group("/message")
 	download := api.Group("/download")
 
+	// Use AuthRequest
 	auth.POST("/login/pwd", handles.LoginPwdHandle)
 	auth.POST("/login/token", handles.LoginTokenHandle)
 	auth.POST("/register", handles.RegisterHandle)
 	auth.POST("/logout", handles.LogoutHandle)
-	upload.POST("/image", middlewares.Auth, middlewares.FileChecker("image"), handles.FileSaver("image"))
-	upload.POST("/audio", middlewares.Auth, middlewares.FileChecker("audio"), handles.FileSaver("audio"))
+
+	// Use UserRequest
 	user.GET("/get", middlewares.Auth, handles.GetUser)
 	user.POST("/update/info", middlewares.Auth, handles.UpdateUserInfo)
 	user.POST("/update/pwd", middlewares.Auth, handles.UpdateUserPwd)
+
+	// Use ConversationRequest
 	conversation.GET("/all", middlewares.Auth, handles.GetAllConversations)
 	conversation.GET("/get", middlewares.Auth, handles.GetConversation)
 	conversation.POST("/new", middlewares.Auth, handles.CreateConversation)
 	conversation.GET("/realtime", middlewares.Auth, handles.Realtime)
 	conversation.DELETE("/del", middlewares.Auth, handles.DeleteConversation)
-	message.POST("/new", middlewares.Auth, handles.CreateMessage)
+	conversation.GET("/dimension", middlewares.Auth, handles.GetDimension)
+	conversation.GET("/keywords", middlewares.Auth, handles.GetKeywords)
+	conversation.POST("/combine", middlewares.Auth, handles.CombineConversations)
+	message.POST("/new", middlewares.Auth, handles.NewMessage)
 	message.DELETE("/del", middlewares.Auth, handles.DeleteMessage)
+
+	// File upload and download
+	upload.POST("/image", middlewares.Auth, middlewares.FileChecker("image"), handles.FileSaver("image"))
+	upload.POST("/audio", middlewares.Auth, middlewares.FileChecker("audio"), handles.FileSaver("audio"))
+	upload.POST("/video", middlewares.Auth, middlewares.FileChecker("video"), handles.FileSaver("video"))
 	download.Static("/image", filepath.Join(flags.DataDir, "image"))
 	download.Static("/audio", filepath.Join(flags.DataDir, "audio"))
+	download.Static("/video", filepath.Join(flags.DataDir, "audio"))
 
+	// Static files
 	e.StaticFS("/assets", http.FS(assetsFS))
 	e.NoRoute(middlewares.APINoRoute, StaticHandler)
 }

@@ -41,12 +41,13 @@ func CreateConversation(UserID string, c *Conversation, preferRole int) (string,
 	if err != nil {
 		return "", errors.WithStack(err)
 	}
-	_, err = CreateContent(messageID, &Content{
-		Text: &conf.SysPrompt[preferRole],
-	})
-	if err != nil {
+
+	if err = CreateContent(messageID, Content{
+		Text: &conf.PromptTemplate[preferRole],
+	}); err != nil {
 		return "", errors.WithStack(err)
 	}
+
 	return id, nil
 }
 
@@ -73,7 +74,7 @@ func CreateMessage(ConversationID string, role int) (string, error) {
 	return id, nil
 }
 
-func CreateContent(MessageID string, c *Content) (string, error) {
+func CreateContent(MessageID string, c Content) error {
 	id := util.GenerateToken(16)
 	var videoPtr *string
 	if c.Video != nil {
@@ -92,55 +93,16 @@ func CreateContent(MessageID string, c *Content) (string, error) {
 	}
 	err := db.CreateContent(&content)
 	if err != nil {
-		return "", errors.WithStack(err)
+		return errors.WithStack(err)
 	}
-	message, err := db.GetMessage(MessageID)
+	messageDB, err := db.GetMessage(MessageID)
 	if err != nil {
-		return "", errors.WithStack(err)
+		return errors.WithStack(err)
 	}
-	message.Contents = util.StringListToDB(append(util.DBToStringList(message.Contents), id))
-	err = db.UpdateMessage(message)
+	messageDB.Contents = util.StringListToDB(append(util.DBToStringList(messageDB.Contents), id))
+	err = db.UpdateMessage(messageDB)
 	if err != nil {
-		return "", errors.WithStack(err)
-	}
-	return id, nil
-}
-
-func AddContent(MessageID, text string, images, audios []string, videos [][]string) error {
-	if text != "" {
-		_, err := CreateContent(MessageID, &Content{
-			Text: &text,
-		})
-		if err != nil {
-			return errors.WithStack(err)
-		}
-	}
-	for _, image := range images {
-		_, err := CreateContent(MessageID, &Content{
-			Image: &image,
-		})
-		if err != nil {
-			return errors.WithStack(err)
-		}
-	}
-	for _, audio := range audios {
-		_, err := CreateContent(MessageID, &Content{
-			Audio: &audio,
-		})
-		if err != nil {
-			return errors.WithStack(err)
-		}
-	}
-	for _, video := range videos {
-		if len(video) == 0 {
-			continue
-		}
-		_, err := CreateContent(MessageID, &Content{
-			Video: &video,
-		})
-		if err != nil {
-			return errors.WithStack(err)
-		}
+		return errors.WithStack(err)
 	}
 	return nil
 }

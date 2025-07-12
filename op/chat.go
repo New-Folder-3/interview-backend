@@ -12,10 +12,11 @@ import (
 	"strings"
 )
 
-func CommonChat(sender *Conversation, key string, c *gin.Context) (*Response, error) {
-	if key == "" {
+func CommonChat(sender *Conversation, c *gin.Context) (*Response, error) {
+	if conf.Conf.API.AliyunAPIKey == "" {
 		return nil, errors.New("API Key is required")
 	}
+	key := conf.Conf.API.AliyunAPIKey
 	jsonPayload, _ := json.Marshal(*sender)
 	req, _ := http.NewRequest(http.MethodPost, conf.AliMDUrl, bytes.NewBuffer(jsonPayload))
 	req.Header.Set("Content-Type", "application/json")
@@ -27,20 +28,26 @@ func CommonChat(sender *Conversation, key string, c *gin.Context) (*Response, er
 	}
 	defer resp.Body.Close()
 
-	c.Writer.Header().Set("Content-Type", "text/event-stream")
-	c.Writer.Header().Set("Cache-Control", "no-cache")
-	c.Writer.Header().Set("Connection", "keep-alive")
+	if c != nil {
+		c.Writer.Header().Set("Content-Type", "text/event-stream")
+		c.Writer.Header().Set("Cache-Control", "no-cache")
+		c.Writer.Header().Set("Connection", "keep-alive")
+	}
 	scanner := bufio.NewScanner(resp.Body)
 	var data string
 	for scanner.Scan() {
 		line := scanner.Text()
 		if strings.HasPrefix(line, "data:") {
 			data = strings.TrimPrefix(line, "data:")
-			c.Writer.Write([]byte(line + "\n"))
-			c.Writer.Flush()
+			if c != nil {
+				c.Writer.Write([]byte(line + "\n"))
+				c.Writer.Flush()
+			}
 		}
 	}
-	c.Writer.Write([]byte("data: [DONE]"))
+	if c != nil {
+		c.Writer.Write([]byte("data: [DONE]"))
+	}
 
 	var ret Response
 	err = json.Unmarshal([]byte(data), &ret)

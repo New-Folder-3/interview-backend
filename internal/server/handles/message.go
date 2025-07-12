@@ -2,67 +2,97 @@ package handles
 
 import (
 	"github.com/gin-gonic/gin"
-	"interview/internal/conf"
 	"interview/op"
 	"interview/util"
 )
 
-func CreateMessage(c *gin.Context) {
-	var message ConversationRequest
-	if err := c.ShouldBindJSON(&message); err != nil {
+func NewMessage(c *gin.Context) {
+	var request ConversationRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
 		util.ErrorPrinter(err)
 		util.ErrorResp(c, "Invalid Request", 400)
 		return
 	}
 	userShould, _ := c.Get("user")
-	if userShould.(string) != message.Username {
+	if userShould.(string) != request.Username {
 		util.ErrorResp(c, "Username mismatch", 400)
 		return
 	}
-	MessageID, err := op.CreateMessage(message.ConversationID, 1)
-	if err != nil {
-		util.ErrorPrinter(err)
-		util.ErrorResp(c, err.Error(), 500)
-		return
-	}
-	var txts []string
-	txts = append(txts, message.Image...)
-	txts = append(txts, message.Audio...)
-	txts = append(txts, message.Text)
-	if message.FastMsg != 0 {
-		txts = append(txts, conf.FastMsg[message.FastMsg-1])
-	}
-	err = op.AddContent(MessageID, message.Text, message.Image, message.Audio, message.Video)
-	conversation, err := op.GetConversation(message.ConversationID)
+
+	// Add Message to Conversation)
+	messageID, err := op.CreateMessage(request.ConversationID, 1)
 	if err != nil {
 		util.ErrorPrinter(err)
 		util.ErrorResp(c, err.Error(), 500)
 		return
 	}
 
-	var response *op.Response
-	switch {
-	case len(message.Audio) > 0:
-		response, err = op.CommonChat(conversation.AddAudio(txts...), conf.Conf.API.AliyunAPIKey, c)
-	case len(message.Image) > 0:
-		response, err = op.CommonChat(conversation.AddImg(txts...), conf.Conf.API.AliyunAPIKey, c)
-	default:
-		response, err = op.CommonChat(conversation.AddText(message.Text, 1), conf.Conf.API.AliyunAPIKey, c)
+	// Add Content to Message
+	for _, audio := range request.Audio {
+		if err = op.CreateContent(messageID, op.Content{Audio: &audio}); err != nil {
+			util.ErrorPrinter(err)
+			util.ErrorResp(c, err.Error(), 500)
+			return
+		}
 	}
+	for _, image := range request.Image {
+		if err = op.CreateContent(messageID, op.Content{Image: &image}); err != nil {
+			util.ErrorPrinter(err)
+			util.ErrorResp(c, err.Error(), 500)
+			return
+		}
+	}
+	for _, video := range request.Video {
+		if err = op.CreateContent(messageID, op.Content{Video: &video}); err != nil {
+			util.ErrorPrinter(err)
+			util.ErrorResp(c, err.Error(), 500)
+			return
+		}
+	}
+	if err = op.CreateContent(messageID, op.Content{
+		Text: &request.Text}); err != nil {
+		util.ErrorPrinter(err)
+		util.ErrorResp(c, err.Error(), 500)
+		return
+	}
+
+	// send message to AI
+	conversation, err := op.GetConversation(request.ConversationID)
 	if err != nil {
 		util.ErrorPrinter(err)
 		util.ErrorResp(c, err.Error(), 500)
 		return
 	}
-	MessageID, err = op.CreateMessage(message.ConversationID, 2)
+	response, err := op.CommonChat(conversation, c)
 	if err != nil {
 		util.ErrorPrinter(err)
 		util.ErrorResp(c, err.Error(), 500)
 		return
 	}
-	content := response.Output.Choices[0].Message.Content[0]
-	_, err = op.CreateContent(MessageID, &content)
-	util.SuccessResp(c, response, "Create Conversation Successfully")
+
+	// add response to conversation
+	messageID, err = op.CreateMessage(request.ConversationID, 2)
+	if err != nil {
+		util.ErrorPrinter(err)
+		util.ErrorResp(c, err.Error(), 500)
+		return
+	}
+	if len(response.Output.Choices) > 0 {
+		err = op.CreateContent(messageID, op.Content{
+			Text: response.Output.Choices[0].Message.Content[0].Text,
+		})
+		if err != nil {
+			util.ErrorPrinter(err)
+			util.ErrorResp(c, err.Error(), 500)
+			return
+		}
+	} else {
+		util.ErrorResp(c, "No response from Model", 500)
+		return
+	}
+
+	// Return the response
+	util.SuccessResp(c, response, "Send Message Successfully")
 }
 
 func DeleteMessage(c *gin.Context) {

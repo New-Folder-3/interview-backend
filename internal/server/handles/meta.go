@@ -19,13 +19,13 @@ type UserRequest struct {
 }
 
 type ConversationRequest struct {
-	Username       string     `json:"username" form:"username"`
-	ConversationID string     `json:"conversation_id" form:"conversation_id"`
-	MessageID      string     `json:"message_id" form:"message_id"`
-	PreferRole     int        `json:"prefer_role" form:"prefer_role"`
-	FastMsg        int        `json:"fast_msg" form:"fast_msg"`
-	Text           string     `json:"text,omitempty" form:"text"`
-	Audio          []string   `json:"audio,omitempty" form:"audio"`
-	Image          []string   `json:"image,omitempty" form:"image"`
-	Video          [][]string `json:"video,omitempty" form:"video"`
+	Username        string     `json:"username" form:"username"`
+	ConversationID  string     `json:"conversation_id" form:"conversation_id"`
+	ConversationIDs []string   `json:"conversation_ids" form:"conversation_ids"`
+	MessageID       string     `json:"message_id" form:"message_id"`
+	PreferRole      int        `json:"prefer_role" form:"prefer_role"`
+	Text            string     `json:"text,omitempty" form:"text"`
+	Audio           []string   `json:"audio,omitempty" form:"audio"`
+	Image           []string   `json:"image,omitempty" form:"image"`
+	Video           [][]string `json:"video,omitempty" form:"video"`
 }

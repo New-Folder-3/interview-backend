@@ -58,7 +58,7 @@ func JsonToFile(dst string, data interface{}) error {
 	return nil
 }
 
-func SaveUploadFile(dst string, header *multipart.FileHeader, file *multipart.File) error {
+func SaveUploadFile(dst string, file *multipart.File) error {
 	out, err := CreateFile(dst)
 	if err != nil {
 		return errors.WithStack(err)
