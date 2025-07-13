@@ -1,7 +1,6 @@
 package op
 
 import (
-	"fmt"
 	"github.com/pkg/errors"
 	"interview/internal/db"
 	"interview/util"
@@ -43,7 +42,6 @@ func GetMessage(messageIDs []string) (*[]Message, error) {
 		}
 		contentIDs := util.DBToStringList(message.Contents)
 		contents, err := GetContent(contentIDs)
-		fmt.Println(messageID, contentIDs)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}

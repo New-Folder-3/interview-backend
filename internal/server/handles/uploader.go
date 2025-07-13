@@ -38,16 +38,16 @@ func FileSaver(typ string) func(*gin.Context) {
 	}
 }
 
-func Wav64Saver(c *gin.Context) {
+func Audio64Saver(c *gin.Context) {
 	var request UploadRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		util.ErrorPrinter(err)
 		util.ErrorResp(c, "Invalid Request", 400)
 		return
 	}
-	fileName := uuid.New().String() + ".wav"
+	fileName := uuid.New().String() + ".mp3"
 	filePath := filepath.Join(flags.DataDir, "audio", fileName)
-	err := util.SaveBase64AudioToWav(request.Base64, filePath)
+	err := util.SaveBase64WebmToMp3(request.Base64, filePath)
 	if err != nil {
 		util.ErrorPrinter(err)
 		util.ErrorResp(c, err.Error(), 500)

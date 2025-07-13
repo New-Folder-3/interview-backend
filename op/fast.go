@@ -1,6 +1,8 @@
 package op
 
-import "github.com/pkg/errors"
+import (
+	"github.com/pkg/errors"
+)
 
 func FastTxt(conversationID, txt string) (string, error) {
 	conversation, err := GetConversation(conversationID)

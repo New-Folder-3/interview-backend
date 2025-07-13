@@ -155,7 +155,7 @@ func DeleteMessage(c *gin.Context) {
 
 func GetDimension(c *gin.Context) {
 	var request ConversationRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
+	if err := c.ShouldBind(&request); err != nil {
 		util.ErrorPrinter(err)
 		util.ErrorResp(c, "Invalid Request", 400)
 		return
@@ -208,7 +208,7 @@ func GetDimension(c *gin.Context) {
 
 func GetKeywords(c *gin.Context) {
 	var request ConversationRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
+	if err := c.ShouldBind(&request); err != nil {
 		util.ErrorPrinter(err)
 		util.ErrorResp(c, "Invalid Request", 400)
 		return

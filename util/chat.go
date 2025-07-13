@@ -5,7 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/gomarkdown/markdown"
 	"github.com/pkg/errors"
+	"golang.org/x/net/html"
 	"interview/internal/client"
 	"interview/internal/conf"
 	"io"
@@ -89,11 +91,12 @@ func ChatStringToStringSlice(str string) []string {
 	return result
 }
 
-func ChatTTS(txt string) (string, error) {
+func ChatTTS(txtOri string) (string, error) {
 	if conf.Conf.API.AliyunAPIKey == "" {
 		return "", errors.New("API Key is required")
 	}
 	key := conf.Conf.API.AliyunAPIKey
+	txt := MarkdownToPlainText(txtOri)
 	request := TTSRequest{
 		Model: conf.Conf.Model.TTSModel,
 		Input: struct {
@@ -107,7 +110,11 @@ func ChatTTS(txt string) (string, error) {
 	req.Header.Set("Authorization", "Bearer "+key)
 	resp, err := client.GlobalHTTPClient.Do(req)
 	if err != nil || resp.StatusCode != http.StatusOK {
-		return "", errors.WithMessage(err, resp.Status)
+		if resp != nil {
+			return "", errors.WithMessage(err, resp.Status)
+		} else {
+			return "", errors.WithStack(err)
+		}
 	}
 	defer resp.Body.Close()
 	data, _ := io.ReadAll(resp.Body)
@@ -212,4 +219,21 @@ func ChatSTTJson(url string) (string, error) {
 		return ret.Transcripts[0].Text, nil
 	}
 	return "", errors.New("No transcription found")
+}
+
+func MarkdownToPlainText(md string) string {
+	htmlData := markdown.ToHTML([]byte(md), nil, nil)
+	doc, _ := html.Parse(strings.NewReader(string(htmlData)))
+	var out strings.Builder
+	var f func(*html.Node)
+	f = func(n *html.Node) {
+		if n.Type == html.TextNode {
+			out.WriteString(n.Data)
+		}
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			f(c)
+		}
+	}
+	f(doc)
+	return out.String()
 }

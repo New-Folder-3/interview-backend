@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"io"
 	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -88,11 +89,11 @@ func StreamWritePCMBase64ToWav(filePath, base64PCM string, isFinal bool) error {
 	return nil
 }
 
-func SaveBase64AudioToWav(base64Data string, filePath string) error {
-	if strings.HasPrefix(base64Data, "data:audio/wav;base64,") {
-		base64Data = strings.TrimPrefix(base64Data, "data:audio/wav;base64,")
+func SaveBase64WebmToMp3(base64Data string, mp3FilePath string) error {
+	if strings.HasPrefix(base64Data, "data:audio/webm;base64,") {
+		base64Data = strings.TrimPrefix(base64Data, "data:audio/webm;base64,")
 	} else {
-		return errors.New("invalid base64 audio format, expected 'data:audio/wav;base64,' prefix")
+		return errors.New("invalid base64 audio format, expected 'data:audio/webm;base64,' prefix")
 	}
 
 	audioBytes, err := base64.StdEncoding.DecodeString(base64Data)
@@ -100,10 +101,25 @@ func SaveBase64AudioToWav(base64Data string, filePath string) error {
 		return err
 	}
 
-	CreateFile(filePath)
-	err = os.WriteFile(filePath, audioBytes, 0644)
+	tmpWebmFile, err := os.CreateTemp("", "*.webm")
 	if err != nil {
 		return err
+	}
+	tmpWebmFileName := tmpWebmFile.Name()
+	defer func() {
+		tmpWebmFile.Close()
+		os.Remove(tmpWebmFileName)
+	}()
+
+	if _, err := tmpWebmFile.Write(audioBytes); err != nil {
+		return err
+	}
+	tmpWebmFile.Close()
+
+	cmd := exec.Command("ffmpeg", "-y", "-i", tmpWebmFileName, "-vn", "-acodec", "libmp3lame", mp3FilePath)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return errors.New("ffmpeg error: " + err.Error() + "\n" + string(output))
 	}
 
 	return nil
