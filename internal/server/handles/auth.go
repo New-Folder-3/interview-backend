@@ -26,7 +26,9 @@ func LoginPwdHandle(c *gin.Context) {
 	}
 	user, err := db.GetUser(userInfo)
 	if err != nil {
+		util.ErrorPrinter(err)
 		util.ErrorResp(c, err.Error(), 400)
+		return
 	}
 	if user.PwdHash == loginRequest.PwdHash {
 		newToken := model.Token{
@@ -92,6 +94,7 @@ func RegisterHandle(c *gin.Context) {
 
 	user := model.NewDefaultUser()
 	user.Name = registerRequest.Username
+	user.ID = registerRequest.Username
 	user.PwdHash = registerRequest.PwdHash
 	user.Email = registerRequest.Email
 	user.Phone = registerRequest.Phone

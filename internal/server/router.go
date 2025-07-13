@@ -65,6 +65,7 @@ func Init(e *gin.Engine) {
 	// File upload and download
 	upload.POST("/image", middlewares.Auth, middlewares.FileChecker("image"), handles.FileSaver("image"))
 	upload.POST("/audio", middlewares.Auth, middlewares.FileChecker("audio"), handles.FileSaver("audio"))
+	upload.POST("/wav64", middlewares.Auth, handles.Wav64Saver)
 	upload.POST("/video", middlewares.Auth, middlewares.FileChecker("video"), handles.FileSaver("video"))
 	download.Static("/image", filepath.Join(flags.DataDir, "image"))
 	download.Static("/audio", filepath.Join(flags.DataDir, "audio"))

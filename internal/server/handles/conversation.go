@@ -1,9 +1,7 @@
 package handles
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"interview/internal/conf"
 	"interview/internal/db"
 	"interview/op"
 	"interview/util"
@@ -102,98 +100,6 @@ func DeleteConversation(c *gin.Context) {
 		return
 	}
 	util.SuccessResp(c, nil, "Delete Conversation Successfully")
-}
-
-func GetDimension(c *gin.Context) {
-	var request ConversationRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		util.ErrorPrinter(err)
-		util.ErrorResp(c, "Invalid Request", 400)
-		return
-	}
-	userToken, _ := c.Get("user")
-	if userToken.(string) != request.Username {
-		util.ErrorResp(c, "Username mismatch", 400)
-		return
-	}
-
-	userDB, err := db.GetUser(request.Username)
-	if err != nil {
-		util.ErrorPrinter(err)
-		util.ErrorResp(c, err.Error(), 500)
-		return
-	}
-
-	response, err := op.FastTxt(request.ConversationID, fmt.Sprintf(conf.PromptTemplate[conf.DimensionPrompt], userDB.Job))
-	if err != nil {
-		util.ErrorPrinter(err)
-		util.ErrorResp(c, err.Error(), 500)
-		return
-	}
-
-	dimensions := util.ChatStringToFloatSlice(response)
-	for index, dimension := range dimensions {
-		switch index {
-		case 0:
-			userDB.UserDimension.Hard = dimension
-		case 1:
-			userDB.UserDimension.Soft = dimension
-		case 2:
-			userDB.UserDimension.Potential = dimension
-		case 3:
-			userDB.UserDimension.Confidence = dimension
-		case 4:
-			userDB.UserDimension.Development = dimension
-		case 5:
-			userDB.UserDimension.Fit = dimension
-		}
-	}
-
-	if err = db.UpdateUser(userDB); err != nil {
-		util.ErrorPrinter(err)
-		util.ErrorResp(c, err.Error(), 500)
-		return
-	}
-	util.SuccessResp(c, userDB.UserDimension, "Get Dimension Successfully")
-}
-
-func GetKeywords(c *gin.Context) {
-	var request ConversationRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		util.ErrorPrinter(err)
-		util.ErrorResp(c, "Invalid Request", 400)
-		return
-	}
-	userToken, _ := c.Get("user")
-	if userToken.(string) != request.Username {
-		util.ErrorResp(c, "Username mismatch", 400)
-		return
-	}
-
-	userDB, err := db.GetUser(request.Username)
-	if err != nil {
-		util.ErrorPrinter(err)
-		util.ErrorResp(c, err.Error(), 500)
-		return
-	}
-
-	response, err := op.FastTxt(request.ConversationID,
-		fmt.Sprintf(conf.PromptTemplate[conf.KeywordsPrompt], conf.Keywords))
-	if err != nil {
-		util.ErrorPrinter(err)
-		util.ErrorResp(c, err.Error(), 500)
-		return
-	}
-
-	keywords := util.ChatStringToStringSlice(response)
-	userDB.Keywords = util.StringListToDB(keywords)
-
-	if err = db.UpdateUser(userDB); err != nil {
-		util.ErrorPrinter(err)
-		util.ErrorResp(c, err.Error(), 500)
-		return
-	}
-	util.SuccessResp(c, keywords, "Get Keywords Successfully")
 }
 
 func CombineConversations(c *gin.Context) {

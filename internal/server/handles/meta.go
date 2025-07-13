@@ -29,3 +29,7 @@ type ConversationRequest struct {
 	Image           []string   `json:"image,omitempty" form:"image"`
 	Video           [][]string `json:"video,omitempty" form:"video"`
 }
+
+type UploadRequest struct {
+	Base64 string `json:"base64" form:"base64"`
+}

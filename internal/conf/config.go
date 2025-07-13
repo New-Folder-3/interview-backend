@@ -28,10 +28,25 @@ type Key struct {
 	AliyunAPIKey string `json:"aliyunApiKey" env:"ALIYUN_API_KEY"`
 }
 
+type Default struct {
+	Job        string `json:"job" env:"JOB"`
+	Age        int    `json:"age" env:"AGE"`
+	ModelVoice string `json:"modelVoice" env:"MODEL_VOICE"`
+}
+
+type Model struct {
+	TTSVoice  string `json:"voice" env:"VOICE"`
+	TTSModel  string `json:"model" env:"MODEL"`
+	STTModel  string `json:"model_voice" env:"MODEL_VOICE"`
+	ChatModel string `json:"chat_model" env:"CHAT_MODEL"`
+}
+
 type Config struct {
 	Database Database `json:"database" envPrefix:"DB_"`
 	Schema   Schema   `json:"schema" envPrefix:"SCHEMA"`
 	API      Key      `json:"api" envPrefix:"API_"`
+	Default  Default  `json:"default" envPrefix:"DEFAULT"`
+	Model    Model    `json:"model" envPrefix:"MODEL"`
 }
 
 func DefaultConfig() *Config {
@@ -47,6 +62,17 @@ func DefaultConfig() *Config {
 			Port:   2233,
 			Listen: "127.0.0.1",
 			URL:    "https://mydomain.com",
+		},
+		Default: Default{
+			Job:        "任何职位",
+			Age:        18,
+			ModelVoice: "Chelsie",
+		},
+		Model: Model{
+			TTSVoice:  "Chelsie",
+			TTSModel:  "qwen-tts",
+			STTModel:  "paraformer-v2",
+			ChatModel: "qwen-vl-max-latest",
 		},
 	}
 }

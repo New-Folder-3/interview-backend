@@ -22,8 +22,8 @@ type User struct {
 	Interview string `json:"interview"` // 面试对话ID
 	Emotion   string `json:"emotion"`   // 情感对话ID
 
-	Keywords      string        `json:"keywords"`       // 关键词，序列
-	UserDimension UserDimension `json:"user_dimension"` // 用户维度评分
+	Keywords      string        `json:"keywords"`                                                 // 关键词，序列
+	UserDimension UserDimension `json:"user_dimension" gorm:"embedded;embeddedPrefix:dimension_"` // 用户维度评分
 }
 
 type UserDimension struct {
@@ -38,8 +38,7 @@ type UserDimension struct {
 func NewDefaultUser() User {
 	return User{
 		Name: fmt.Sprintf("面试者%s", util.GenerateToken(6)),
-		ID:   util.GenerateToken(16),
-		Job:  conf.DefaultJob,
-		Age:  conf.DefaultAge,
+		Job:  conf.Conf.Default.Job,
+		Age:  conf.Conf.Default.Age,
 	}
 }

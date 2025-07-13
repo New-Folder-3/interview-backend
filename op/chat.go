@@ -1,18 +1,16 @@
 package op
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	"interview/internal/client"
 	"interview/internal/conf"
+	"io"
 	"net/http"
-	"strings"
 )
 
-func CommonChat(sender *Conversation, c *gin.Context) (*Response, error) {
+func CommonChat(sender *Conversation) (*Response, error) {
 	if conf.Conf.API.AliyunAPIKey == "" {
 		return nil, errors.New("API Key is required")
 	}
@@ -21,36 +19,14 @@ func CommonChat(sender *Conversation, c *gin.Context) (*Response, error) {
 	req, _ := http.NewRequest(http.MethodPost, conf.AliMDUrl, bytes.NewBuffer(jsonPayload))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+key)
-	req.Header.Set("X-DashScope-SSE", "enable")
 	resp, err := client.GlobalHTTPClient.Do(req)
 	if err != nil || resp.StatusCode != http.StatusOK {
 		return nil, errors.WithMessage(err, resp.Status)
 	}
 	defer resp.Body.Close()
-
-	if c != nil {
-		c.Writer.Header().Set("Content-Type", "text/event-stream")
-		c.Writer.Header().Set("Cache-Control", "no-cache")
-		c.Writer.Header().Set("Connection", "keep-alive")
-	}
-	scanner := bufio.NewScanner(resp.Body)
-	var data string
-	for scanner.Scan() {
-		line := scanner.Text()
-		if strings.HasPrefix(line, "data:") {
-			data = strings.TrimPrefix(line, "data:")
-			if c != nil {
-				c.Writer.Write([]byte(line + "\n"))
-				c.Writer.Flush()
-			}
-		}
-	}
-	if c != nil {
-		c.Writer.Write([]byte("data: [DONE]"))
-	}
-
+	data, _ := io.ReadAll(resp.Body)
 	var ret Response
-	err = json.Unmarshal([]byte(data), &ret)
+	err = json.Unmarshal(data, &ret)
 	switch {
 	case err != nil:
 		return nil, errors.WithStack(err)

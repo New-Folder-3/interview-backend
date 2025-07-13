@@ -8,7 +8,6 @@ import (
 	"interview/internal/conf"
 	"interview/util"
 	"mime/multipart"
-	"net/http"
 	"path"
 	"path/filepath"
 )
@@ -35,8 +34,25 @@ func FileSaver(typ string) func(*gin.Context) {
 		}
 
 		URL := conf.Conf.Schema.URL + path.Join("/api/download", typ, filename)
-		c.JSON(http.StatusOK, gin.H{
-			"url": URL,
-		})
+		util.SuccessResp(c, URL, "File saved successfully")
 	}
+}
+
+func Wav64Saver(c *gin.Context) {
+	var request UploadRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		util.ErrorPrinter(err)
+		util.ErrorResp(c, "Invalid Request", 400)
+		return
+	}
+	fileName := uuid.New().String() + ".wav"
+	filePath := filepath.Join(flags.DataDir, "audio", fileName)
+	err := util.SaveBase64AudioToWav(request.Base64, filePath)
+	if err != nil {
+		util.ErrorPrinter(err)
+		util.ErrorResp(c, err.Error(), 500)
+		return
+	}
+	URL := conf.Conf.Schema.URL + path.Join("/api/download", "audio", fileName)
+	util.SuccessResp(c, URL, "Audio saved successfully")
 }

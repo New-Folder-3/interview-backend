@@ -8,7 +8,7 @@ func FastTxt(conversationID, txt string) (string, error) {
 		return "", errors.WithStack(err)
 	}
 
-	response, err := CommonChat(conversation.AddText(txt, 2), nil)
+	response, err := CommonChat(conversation.AddText(txt, 2))
 	if len(response.Output.Choices) == 0 {
 		err = errors.New("response is empty")
 	}

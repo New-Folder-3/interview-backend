@@ -7,7 +7,7 @@ import (
 
 func NewConversation() *Conversation {
 	return &Conversation{
-		Model:      "qwen-vl-max-latest",
+		Model:      conf.Conf.Model.ChatModel,
 		Parameters: &Parameters{},
 	}
 }

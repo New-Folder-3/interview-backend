@@ -43,7 +43,7 @@ func CreateConversation(UserID string, c *Conversation, preferRole int) (string,
 	}
 
 	if err = CreateContent(messageID, Content{
-		Text: &conf.PromptTemplate[preferRole],
+		Text: &conf.InterviewerPrompt[preferRole],
 	}); err != nil {
 		return "", errors.WithStack(err)
 	}
