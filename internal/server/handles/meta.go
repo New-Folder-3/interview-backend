@@ -1,5 +1,7 @@
 package handles
 
+import "interview/internal/model"
+
 type AuthRequest struct {
 	Username  string `json:"username" form:"username"`
 	PwdHash   string `json:"pwd" form:"pwd"`
@@ -11,11 +13,9 @@ type AuthRequest struct {
 
 type UserRequest struct {
 	Username string `json:"username" form:"username" binding:"required"`
-	Nickname string `json:"nickname" form:"nickname"`
-	Email    string `json:"email" form:"email"`
-	Phone    string `json:"phone" form:"phone"`
-	OldPwd   string `json:"oldpwd" form:"oldpwd"`
-	NewPwd   string `json:"newpwd" form:"newpwd"`
+	model.UserChangable
+	model.UserPwd
+	NewPwdHash string `json:"new_pwd_hash" form:"new_pwd_hash"` // 新密码哈希
 }
 
 type ConversationRequest struct {
@@ -32,4 +32,13 @@ type ConversationRequest struct {
 
 type UploadRequest struct {
 	Base64 string `json:"base64" form:"base64"`
+}
+
+type InterviewRequest struct {
+	Username       string               `json:"username" form:"username"`
+	InterviewID    string               `json:"interview_id" form:"interview_id"`
+	ConversationID string               `json:"conversation_id" form:"conversation_id"`
+	Comment        model.CommentContent `json:"comment" form:"comment"`
+	CommentRole    string               `json:"comment_role" form:"comment_role"`
+	model.InterviewChangeable
 }

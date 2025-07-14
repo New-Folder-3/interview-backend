@@ -7,38 +7,41 @@ import (
 )
 
 type User struct {
-	Name              string `json:"name" gorm:"not null"`          // 姓名
-	ID                string `json:"id" gorm:"PrimaryKey;not null"` // 用户名
-	Email             string `json:"email" gorm:"unique;not null"`  // 邮箱
-	Phone             string `json:"phone" gorm:"unique;not null"`  // 电话
-	PwdHash           string `json:"-" gorm:"not null"`             // 密码哈希
-	PwdTS             int64  `json:"-" gorm:"not null"`             // 密码修改时间戳
-	PreferInterviewer int    `json:"prefer_interviewer" gorm:"not null"`
-	Conversation      string `json:"conversation"` // 所有对话
-	Age               int    `json:"age"`          // 年龄
-	Job               string `json:"role"`         // 职位
-
-	Resume    string `json:"resume"`    // 简历对话ID
-	Interview string `json:"interview"` // 面试对话ID
-	Emotion   string `json:"emotion"`   // 情感对话ID
-
-	Keywords      string        `json:"keywords"`                                                 // 关键词，序列
-	UserDimension UserDimension `json:"user_dimension" gorm:"embedded;embeddedPrefix:dimension_"` // 用户维度评分
+	// can't change
+	UserNotChangeable
+	// can change
+	UserChangable
+	// can change seperately
+	UserPwd
 }
 
-type UserDimension struct {
-	Hard        float64 `json:"hard"`        // 硬技能
-	Soft        float64 `json:"soft"`        // 软技能
-	Potential   float64 `json:"potential"`   // 潜力
-	Confidence  float64 `json:"confidence"`  // 自信心
-	Development float64 `json:"development"` // 发展潜力
-	Fit         float64 `json:"fit"`         // 岗位适配度
+type UserNotChangeable struct {
+	ID           string `json:"username" gorm:"PrimaryKey;not null;omitempty"` // 用户名
+	Interviews   string `json:"interview" gorm:"omitempty"`                    // 面试ID列表，序列化存储
+	Conversation string `json:"conversation" gorm:"omitempty"`                 // 所有对话
+}
+
+type UserChangable struct {
+	Name              string `json:"name" gorm:"not null;omitempty"`         // 姓名
+	Email             string `json:"email" gorm:"unique;not null;omitempty"` // 邮箱
+	Phone             string `json:"phone" gorm:"unique;not null;omitempty"` // 电话
+	PreferInterviewer int    `json:"prefer_interviewer" gorm:"not null;omitempty"`
+	Age               int    `json:"age" gorm:"omitempty"`    // 年龄
+	Job               string `json:"role" gorm:"omitempty"`   // 职位
+	Gender            string `json:"gender" gorm:"omitempty"` // 性别
+}
+
+type UserPwd struct {
+	PwdHash string `json:"pwd_hash" gorm:"not null;omitempty"` // 密码哈希
+	PwdTS   int64  `json:"pwd_ts" gorm:"not null;omitempty"`   // 密码修改时间戳
 }
 
 func NewDefaultUser() User {
 	return User{
-		Name: fmt.Sprintf("面试者%s", util.GenerateToken(6)),
-		Job:  conf.Conf.Default.Job,
-		Age:  conf.Conf.Default.Age,
+		UserChangable: UserChangable{
+			Name: fmt.Sprintf("面试者%s", util.GenerateToken(6)),
+			Job:  conf.Conf.Default.Job,
+			Age:  conf.Conf.Default.Age,
+		},
 	}
 }

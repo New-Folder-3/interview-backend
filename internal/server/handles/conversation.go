@@ -115,43 +115,12 @@ func CombineConversations(c *gin.Context) {
 		return
 	}
 
-	var newConversationID string
-	var newConversationMessage []string
-	firstConversation := true
-	for _, conversationID := range request.ConversationIDs {
-		conversationDB, err := db.GetConversation(conversationID)
-		if err != nil {
-			continue
-		}
-
-		if firstConversation {
-			newConversationID, err = op.CreateConversation(request.Username, op.NewConversation(), conversationDB.PreferRole)
-			if err != nil {
-				continue
-			}
-			newConversationDB, err := db.GetConversation(newConversationID)
-			if err != nil {
-				continue
-			}
-			newConversationMessage = util.DBToStringList(newConversationDB.Messages)
-			firstConversation = false
-		}
-
-		conversationMessage := util.DBToStringList(conversationDB.Messages)
-		newConversationMessage = append(newConversationMessage, conversationMessage[1:]...)
-	}
-
-	newConversationDB, err := db.GetConversation(newConversationID)
+	newConversationID, err := op.CombineConversations(request.ConversationIDs, request.Username)
 	if err != nil {
 		util.ErrorPrinter(err)
 		util.ErrorResp(c, err.Error(), 500)
 		return
 	}
-	newConversationDB.Messages = util.StringListToDB(newConversationMessage)
-	if err = db.UpdateConversation(newConversationDB); err != nil {
-		util.ErrorPrinter(err)
-		util.ErrorResp(c, err.Error(), 500)
-		return
-	}
+
 	util.SuccessResp(c, newConversationID, "Combine Conversations Successfully")
 }

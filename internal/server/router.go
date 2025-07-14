@@ -38,6 +38,7 @@ func Init(e *gin.Engine) {
 	conversation := api.Group("/conversation")
 	message := api.Group("/message")
 	download := api.Group("/download")
+	interview := api.Group("/interview")
 
 	// Use AuthRequest
 	auth.POST("/login/pwd", handles.LoginPwdHandle)
@@ -56,11 +57,20 @@ func Init(e *gin.Engine) {
 	conversation.POST("/new", middlewares.Auth, handles.CreateConversation)
 	conversation.GET("/realtime", middlewares.Auth, handles.Realtime)
 	conversation.DELETE("/del", middlewares.Auth, handles.DeleteConversation)
-	conversation.GET("/dimension", middlewares.Auth, handles.GetDimension)
-	conversation.GET("/keywords", middlewares.Auth, handles.GetKeywords)
 	conversation.POST("/combine", middlewares.Auth, handles.CombineConversations)
 	message.POST("/new", middlewares.Auth, handles.NewMessage)
 	message.DELETE("/del", middlewares.Auth, handles.DeleteMessage)
+
+	// Use InterviewRequest
+	interview.POST("/new", middlewares.Auth, handles.NewInterview)
+	interview.GET("/get", middlewares.Auth, handles.GetInterview)
+	interview.GET("/all", middlewares.Auth, handles.GetAllInterviews)
+	interview.DELETE("/del", middlewares.Auth, handles.DeleteInterview)
+	interview.POST("/update", middlewares.Auth, handles.UpdateInterview)
+	interview.GET("/keywords", middlewares.Auth, handles.GetKeywords)
+	interview.GET("/dimension", middlewares.Auth, handles.GetDimension)
+	interview.GET("/get-comment", middlewares.Auth, handles.GetComment)
+	interview.POST("/add-comment", middlewares.Auth, handles.AddComment)
 
 	// File upload and download
 	upload.POST("/image", middlewares.Auth, middlewares.FileChecker("image"), handles.FileSaver("image"))

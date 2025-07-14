@@ -46,10 +46,7 @@ func UpdateUserInfo(c *gin.Context) {
 		util.ErrorResp(c, err.Error(), 400)
 		return
 	}
-
-	user.Email = updateRequest.Email
-	user.Phone = updateRequest.Phone
-	user.Name = updateRequest.Nickname
+	user.UserChangable = updateRequest.UserChangable
 
 	if err := db.UpdateUser(user); err != nil {
 		util.ErrorPrinter(err)
@@ -79,10 +76,10 @@ func UpdateUserPwd(c *gin.Context) {
 		return
 	}
 
-	if updatePwdRequest.OldPwd == user.PwdHash {
-		user.PwdHash = updatePwdRequest.NewPwd
+	if updatePwdRequest.PwdHash == user.PwdHash {
+		user.PwdHash = updatePwdRequest.NewPwdHash
 		user.PwdTS = time.Now().Unix()
-	} else if updatePwdRequest.OldPwd != "" {
+	} else if updatePwdRequest.PwdHash != "" {
 		util.ErrorResp(c, "Incorrect Old Password, Password changed failed", 400)
 		return
 	}
