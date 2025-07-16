@@ -41,12 +41,21 @@ type Model struct {
 	ChatModel string `json:"chat_model" env:"CHAT_MODEL"`
 }
 
+type Mail struct {
+	Host     string `json:"host" env:"HOST"`
+	Port     int    `json:"port" env:"PORT"`
+	Username string `json:"username" env:"USERNAME"`
+	Password string `json:"password" env:"PASSWORD"`
+	From     string `json:"from" env:"FROM"`
+}
+
 type Config struct {
 	Database Database `json:"database" envPrefix:"DB_"`
 	Schema   Schema   `json:"schema" envPrefix:"SCHEMA"`
 	API      Key      `json:"api" envPrefix:"API_"`
 	Default  Default  `json:"default" envPrefix:"DEFAULT"`
 	Model    Model    `json:"model" envPrefix:"MODEL"`
+	Mail     Mail     `json:"mail" envPrefix:"MAIL"`
 }
 
 func DefaultConfig() *Config {

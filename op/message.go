@@ -80,7 +80,7 @@ func GetMessage(messageIDs []string) (*[]Message, error) {
 	return &ret, nil
 }
 
-func NewMessage(conversationID, Text string, Audio string, Image []string, Video []string) (string, string, string, error) {
+func NewMessage(conversationID, Text string, Audio string, Image []string, Video string) (string, string, string, error) {
 	// Add Message to Conversation
 	messageID, err := CreateMessage(conversationID, 1)
 	if err != nil {
@@ -131,10 +131,10 @@ func NewMessage(conversationID, Text string, Audio string, Image []string, Video
 		}
 	}
 
-	if len(Video) > 0 {
+	if Video != "" {
 		content := Content{
 			Type:  "video",
-			Video: &Video,
+			Video: &VideoURL{URL: Video},
 		}
 		if err = CreateContent(messageID, content); err != nil {
 			return "", "", "", errors.WithStack(err)

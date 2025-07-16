@@ -165,3 +165,33 @@ func ChunksToWavBase64(chunks []string) (string, error) {
 	dataURL := "data:audio/wav;base64," + wavBase64
 	return dataURL, nil
 }
+
+func WebmToMp4Stream(webm io.Reader) (io.Reader, error) {
+	cmd := exec.Command("ffmpeg",
+		"-i", "pipe:0",
+		"-f", "mp4",
+		"-movflags", "frag_keyframe+empty_moov",
+		"-y",
+		"pipe:1",
+	)
+
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		return nil, err
+	}
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := cmd.Start(); err != nil {
+		return nil, err
+	}
+
+	go func() {
+		defer stdin.Close()
+		io.Copy(stdin, webm)
+	}()
+
+	return stdout, nil
+}

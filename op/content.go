@@ -9,19 +9,14 @@ import (
 
 func CreateContent(MessageID string, c Content) error {
 	id := util.GenerateToken(16)
-	var videoPtr *string
-	if c.Video != nil {
-		videos := util.StringListToDB(*c.Video)
-		videoPtr = &videos
-	} else {
-		videoPtr = nil
-	}
-	var audio, image *string
+	var audio, image, video *string
 	switch {
 	case c.InputAudio != nil:
 		audio = &c.InputAudio.Data
 	case c.ImageURL != nil:
 		image = &c.ImageURL.URL
+	case c.Video != nil:
+		video = &c.Video.URL
 	}
 	content := model.Content{
 		ID:        id,
@@ -29,7 +24,7 @@ func CreateContent(MessageID string, c Content) error {
 		Text:      c.Text,
 		Audio:     audio,
 		Image:     image,
-		Video:     videoPtr,
+		Video:     video,
 	}
 	err := db.CreateContent(&content)
 	if err != nil {
@@ -75,14 +70,6 @@ func GetContent(contentIDs []string) (*[]Content, error) {
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		var videoPtr *[]string
-		if contentDB.Video != nil {
-			videos := util.DBToStringList(*contentDB.Video)
-			videoPtr = &videos
-		} else {
-			videoPtr = nil
-		}
-
 		content := Content{}
 		switch {
 		case contentDB.Text != nil:
@@ -95,13 +82,15 @@ func GetContent(contentIDs []string) (*[]Content, error) {
 				Data:   *contentDB.Audio,
 			}
 		case contentDB.Image != nil:
-			content.Type = "input_image"
+			content.Type = "image_url"
 			content.ImageURL = &ImageURL{
 				URL: *contentDB.Image,
 			}
-		case videoPtr != nil:
-			content.Type = "input_video"
-			content.Video = videoPtr
+		case content.Video != nil:
+			content.Type = "video_url"
+			content.Video = &VideoURL{
+				URL: *contentDB.Video,
+			}
 		}
 		ret = append(ret, content)
 	}

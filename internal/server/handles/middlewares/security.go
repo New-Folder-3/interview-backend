@@ -24,7 +24,7 @@ func FileChecker(typ string) func(c *gin.Context) {
 		case "audio":
 			c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, 10<<20)
 		case "video":
-			c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, 100<<20)
+			c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, 50*1024*1024)
 		}
 		file, header, err := c.Request.FormFile("file")
 		if err != nil {

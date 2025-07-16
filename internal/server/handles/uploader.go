@@ -7,6 +7,7 @@ import (
 	"interview/cmd/flags"
 	"interview/internal/conf"
 	"interview/util"
+	"io"
 	"mime/multipart"
 	"path"
 	"path/filepath"
@@ -20,14 +21,25 @@ func FileSaver(typ string) func(*gin.Context) {
 			util.ErrorResp(c, "Incomplete upload", 500)
 			return
 		}
-		file := fileRe.(multipart.File)
+		file := fileRe.(io.Reader)
 		header := headerRe.(*multipart.FileHeader)
 
 		ext := filepath.Ext(header.Filename)
+		if typ == "video" {
+			var err error
+			file, err = util.WebmToMp4Stream(file)
+			if err != nil {
+				util.ErrorPrinter(err)
+				util.ErrorResp(c, "Failed to convert video format", 500)
+				return
+			}
+			ext = ".mp4"
+		}
+
 		filename := fmt.Sprintf("%s%s", uuid.New().String(), ext)
 		filePath := filepath.Join(flags.DataDir, typ, filename)
-
 		err := util.SaveUploadFile(filePath, &file)
+
 		if err != nil {
 			util.ErrorPrinter(err)
 			util.ErrorResp(c, err.Error(), 500)

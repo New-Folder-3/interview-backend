@@ -9,6 +9,7 @@ type AuthRequest struct {
 	Email     string `json:"email" form:"email"`
 	Phone     string `json:"phone" form:"phone"`
 	KeepLogin bool   `json:"keeplogin" form:"keeplogin"`
+	OTP       string `json:"otp" form:"otp"` // 一次性密码
 }
 
 type UserRequest struct {
@@ -27,7 +28,7 @@ type ConversationRequest struct {
 	Text            string   `json:"text,omitempty" form:"text"`
 	Audio           string   `json:"audio,omitempty" form:"audio"`
 	Image           []string `json:"image,omitempty" form:"image"`
-	Video           []string `json:"video,omitempty" form:"video"`
+	Video           string   `json:"video,omitempty" form:"video"`
 }
 
 type UploadRequest struct {

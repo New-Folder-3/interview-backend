@@ -24,7 +24,11 @@ type Content struct {
 	Text       *string     `json:"text,omitempty"`
 	ImageURL   *ImageURL   `json:"image_url,omitempty"`
 	InputAudio *InputAudio `json:"input_audio,omitempty"`
-	Video      *[]string   `json:"video,omitempty"`
+	Video      *VideoURL   `json:"video,omitempty"`
+}
+
+type VideoURL struct {
+	URL string `json:"url"`
 }
 
 type InputAudio struct {

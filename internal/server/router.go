@@ -79,7 +79,7 @@ func Init(e *gin.Engine) {
 	upload.POST("/video", middlewares.Auth, middlewares.FileChecker("video"), handles.FileSaver("video"))
 	download.Static("/image", filepath.Join(flags.DataDir, "image"))
 	download.Static("/audio", filepath.Join(flags.DataDir, "audio"))
-	download.Static("/video", filepath.Join(flags.DataDir, "audio"))
+	download.Static("/video", filepath.Join(flags.DataDir, "video"))
 
 	// Static files
 	e.StaticFS("/assets", http.FS(assetsFS))

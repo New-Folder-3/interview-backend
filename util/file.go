@@ -5,7 +5,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"io"
-	"mime/multipart"
 	"os"
 	"path/filepath"
 )
@@ -49,7 +48,7 @@ func JsonToFile(dst string, data interface{}) error {
 	return nil
 }
 
-func SaveUploadFile(dst string, file *multipart.File) error {
+func SaveUploadFile(dst string, file *io.Reader) error {
 	out, err := CreateFile(dst)
 	if err != nil {
 		return errors.WithStack(err)

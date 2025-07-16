@@ -28,6 +28,8 @@ type InterviewChangeable struct {
 	EmotionConversation   string `json:"emotion_conversation" form:"emotion_conversation"`     // 第三次对话ID
 	ResultConversation    string `json:"result_conversation" form:"result_conversation"`       // 最终对话ID
 	VideoURL              string `json:"video_url" form:"video_url"`
+	ResumeURL             string `json:"resume_url" form:"resume_url"`
+	VideoClipURL          string `json:"video_url_clip" form:"video_url_clip"` // 视频片段URL
 }
 
 func NewDefaultInterview() Interview {

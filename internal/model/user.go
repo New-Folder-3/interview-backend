@@ -19,6 +19,9 @@ type UserNotChangeable struct {
 	ID           string `json:"username" gorm:"PrimaryKey;not null;omitempty"` // 用户名
 	Interviews   string `json:"interview" gorm:"omitempty"`                    // 面试ID列表，序列化存储
 	Conversation string `json:"conversation" gorm:"omitempty"`                 // 所有对话
+
+	OTP   string `json:"otp" gorm:"omitempty"`
+	OTPTS int64  `json:"otp_ts" gorm:"omitempty"` // OTP时间戳
 }
 
 type UserChangable struct {
@@ -26,9 +29,10 @@ type UserChangable struct {
 	Email             string `json:"email" gorm:"unique;not null;omitempty"` // 邮箱
 	Phone             string `json:"phone" gorm:"unique;not null;omitempty"` // 电话
 	PreferInterviewer int    `json:"prefer_interviewer" gorm:"not null;omitempty"`
-	Age               int    `json:"age" gorm:"omitempty"`    // 年龄
-	Job               string `json:"role" gorm:"omitempty"`   // 职位
-	Gender            string `json:"gender" gorm:"omitempty"` // 性别
+	Age               int    `json:"age" gorm:"omitempty"`                            // 年龄
+	Job               string `json:"role" gorm:"omitempty"`                           // 职位
+	Gender            string `json:"gender" gorm:"omitempty"`                         // 性别
+	EnvironmentAudio  bool   `json:"environment_audio" gorm:"not null;default:false"` // 是否开启环境音
 }
 
 type UserPwd struct {
