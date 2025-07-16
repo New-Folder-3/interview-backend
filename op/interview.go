@@ -20,6 +20,9 @@ func NewInterview(Username string) (string, error) {
 	if err = db.UpdateUser(userDB); err != nil {
 		return "", errors.WithStack(err)
 	}
+	if err = db.CreateInterview(&interview); err != nil {
+		return "", errors.WithStack(err)
+	}
 	return interview.ID, nil
 }
 
@@ -85,6 +88,9 @@ func AddModelComment(InterviewID string, Comment model.CommentContent) error {
 		return errors.WithStack(err)
 	}
 	interviewDB.ModelComments = commentDB.ID
+	if err = db.UpdateInterview(interviewDB); err != nil {
+		return errors.WithStack(err)
+	}
 	return nil
 }
 

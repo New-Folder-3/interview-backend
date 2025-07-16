@@ -16,12 +16,19 @@ func CreateContent(MessageID string, c Content) error {
 	} else {
 		videoPtr = nil
 	}
+	var audio, image *string
+	switch {
+	case c.InputAudio != nil:
+		audio = &c.InputAudio.Data
+	case c.ImageURL != nil:
+		image = &c.ImageURL.URL
+	}
 	content := model.Content{
 		ID:        id,
 		MessageID: MessageID,
 		Text:      c.Text,
-		Audio:     c.Audio,
-		Image:     c.Image,
+		Audio:     audio,
+		Image:     image,
 		Video:     videoPtr,
 	}
 	err := db.CreateContent(&content)
@@ -64,23 +71,39 @@ func DeleteContent(ContentID string, internal bool) error {
 func GetContent(contentIDs []string) (*[]Content, error) {
 	var ret []Content
 	for _, contentID := range contentIDs {
-		content, err := db.GetContent(contentID)
+		contentDB, err := db.GetContent(contentID)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
 		var videoPtr *[]string
-		if content.Video != nil {
-			videos := util.DBToStringList(*content.Video)
+		if contentDB.Video != nil {
+			videos := util.DBToStringList(*contentDB.Video)
 			videoPtr = &videos
 		} else {
 			videoPtr = nil
 		}
-		ret = append(ret, Content{
-			Text:  content.Text,
-			Image: content.Image,
-			Video: videoPtr,
-			Audio: content.Audio,
-		})
+
+		content := Content{}
+		switch {
+		case contentDB.Text != nil:
+			content.Type = "text"
+			content.Text = contentDB.Text
+		case contentDB.Audio != nil:
+			content.Type = "input_audio"
+			content.InputAudio = &InputAudio{
+				Format: "wav",
+				Data:   *contentDB.Audio,
+			}
+		case contentDB.Image != nil:
+			content.Type = "input_image"
+			content.ImageURL = &ImageURL{
+				URL: *contentDB.Image,
+			}
+		case videoPtr != nil:
+			content.Type = "input_video"
+			content.Video = videoPtr
+		}
+		ret = append(ret, content)
 	}
 	return &ret, nil
 }

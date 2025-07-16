@@ -19,7 +19,7 @@ func NewMessage(c *gin.Context) {
 		return
 	}
 
-	response, transcription, ttsURL, err := op.NewMessage(request.MessageID, request.Text, request.Audio, request.Image, request.Video)
+	response, transcription, ttsURL, err := op.NewMessage(request.ConversationID, request.Text, request.Audio, request.Image, request.Video)
 	if err != nil {
 		util.ErrorPrinter(err)
 		util.ErrorResp(c, err.Error(), 500)
@@ -30,7 +30,7 @@ func NewMessage(c *gin.Context) {
 	util.SuccessResp(c, map[string]interface{}{
 		"text":               response,
 		"user_transcription": transcription,
-		"tts_url":            ttsURL,
+		"model_audio":        ttsURL,
 	}, "Send Message Successfully")
 }
 

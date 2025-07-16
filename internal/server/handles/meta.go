@@ -19,15 +19,15 @@ type UserRequest struct {
 }
 
 type ConversationRequest struct {
-	Username        string     `json:"username" form:"username"`
-	ConversationID  string     `json:"conversation_id" form:"conversation_id"`
-	ConversationIDs []string   `json:"conversation_ids" form:"conversation_ids"`
-	MessageID       string     `json:"message_id" form:"message_id"`
-	PreferRole      int        `json:"prefer_role" form:"prefer_role"`
-	Text            string     `json:"text,omitempty" form:"text"`
-	Audio           []string   `json:"audio,omitempty" form:"audio"`
-	Image           []string   `json:"image,omitempty" form:"image"`
-	Video           [][]string `json:"video,omitempty" form:"video"`
+	Username        string   `json:"username" form:"username"`
+	ConversationID  string   `json:"conversation_id" form:"conversation_id"`
+	ConversationIDs []string `json:"conversation_ids" form:"conversation_ids"`
+	MessageID       string   `json:"message_id" form:"message_id"`
+	PreferRole      int      `json:"prefer_role" form:"prefer_role"`
+	Text            string   `json:"text,omitempty" form:"text"`
+	Audio           string   `json:"audio,omitempty" form:"audio"`
+	Image           []string `json:"image,omitempty" form:"image"`
+	Video           []string `json:"video,omitempty" form:"video"`
 }
 
 type UploadRequest struct {
@@ -35,10 +35,10 @@ type UploadRequest struct {
 }
 
 type InterviewRequest struct {
-	Username       string               `json:"username" form:"username"`
-	InterviewID    string               `json:"interview_id" form:"interview_id"`
-	ConversationID string               `json:"conversation_id" form:"conversation_id"`
-	Comment        model.CommentContent `json:"comment" form:"comment"`
-	CommentRole    string               `json:"comment_role" form:"comment_role"`
+	Username       string `json:"username" form:"username"`
+	InterviewID    string `json:"interview_id" form:"interview_id"`
+	ConversationID string `json:"conversation_id" form:"conversation_id"`
+	model.CommentContent
+	CommentRole string `json:"comment_role" form:"comment_role"`
 	model.InterviewChangeable
 }

@@ -2,7 +2,7 @@ package conf
 
 var (
 	Conf     *Config
-	AliMDUrl = "https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation"
+	AliMDUrl = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
 	AliWSUrl = "wss://dashscope.aliyuncs.com/api-ws/v1/realtime"
 	//AliWSUrl = "ws://localhost:8765"
 	AliSTTUrl          = "https://dashscope.aliyuncs.com/api/v1/services/audio/asr/transcription"
@@ -29,7 +29,7 @@ const (
 )
 
 var Role = []string{
-	"system",
-	"user",
-	"assistant",
+	"system",    // 0
+	"user",      // 1
+	"assistant", // 2
 }

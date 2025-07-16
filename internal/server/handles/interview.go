@@ -2,6 +2,7 @@ package handles
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
 	"interview/internal/db"
 	"interview/op"
 	"interview/util"
@@ -136,23 +137,20 @@ func GetComment(c *gin.Context) {
 		return
 	}
 
-	modelComment, err := op.GetModelComment(request.InterviewID)
-	if err != nil {
-		util.ErrorPrinter(err)
-		util.ErrorResp(c, err.Error(), 500)
-		return
-	}
+	modelComment, err1 := op.GetModelComment(request.InterviewID)
+	userComment, err2 := op.GetUserComment(request.InterviewID)
 
-	userComment, err := op.GetUserComment(request.InterviewID)
-	if err != nil {
-		util.ErrorPrinter(err)
-		util.ErrorResp(c, err.Error(), 500)
-		return
+	var msg string
+	if err1 != nil {
+		msg += "Get Model Comment Failed: " + err1.Error() + "; "
+	}
+	if err2 != nil {
+		msg += "Get User Comment Failed: " + err2.Error() + "; "
 	}
 	util.SuccessResp(c, map[string]interface{}{
 		"model_comment": modelComment,
 		"user_comment":  userComment,
-	}, "Get Comment Success")
+	}, msg)
 }
 
 func AddComment(c *gin.Context) {
@@ -171,9 +169,11 @@ func AddComment(c *gin.Context) {
 	var err error
 	switch request.CommentRole {
 	case "model":
-		err = op.AddModelComment(request.InterviewID, request.Comment)
+		err = op.AddModelComment(request.InterviewID, request.CommentContent)
 	case "user":
-		err = op.AddUserComment(request.InterviewID, request.Comment)
+		err = op.AddUserComment(request.InterviewID, request.CommentContent)
+	default:
+		err = errors.New("invalid comment role")
 	}
 	if err != nil {
 		util.ErrorPrinter(err)

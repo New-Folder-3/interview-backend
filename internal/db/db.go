@@ -16,7 +16,9 @@ func Init(d *gorm.DB) {
 		new(model.Token),
 		new(model.Conversation),
 		new(model.Message),
-		new(model.Content))
+		new(model.Content),
+		new(model.Interview),
+		new(model.Comment))
 	if err != nil {
 		log.Fatalf("failed migrate database: %s", err.Error())
 	}

@@ -36,8 +36,8 @@ type Default struct {
 
 type Model struct {
 	TTSVoice  string `json:"voice" env:"VOICE"`
-	TTSModel  string `json:"model" env:"MODEL"`
-	STTModel  string `json:"model_voice" env:"MODEL_VOICE"`
+	TTSModel  string `json:"tts_model" env:"TTS_MODEL"`
+	STTModel  string `json:"stt_model" env:"STT_MODEL"`
 	ChatModel string `json:"chat_model" env:"CHAT_MODEL"`
 }
 

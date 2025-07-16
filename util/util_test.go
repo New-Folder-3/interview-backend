@@ -1,6 +1,10 @@
 package util
 
-import "testing"
+import (
+	"context"
+	"testing"
+	"time"
+)
 
 func TestStreamWritePCMBase64ToWav(t *testing.T) {
 	data := make([]string, 5)
@@ -22,5 +26,16 @@ func TestStreamWritePCMBase64ToWav(t *testing.T) {
 		t.Errorf("StreamWritePCMBase64ToWav failed with empty data: %v", err)
 	} else {
 		t.Logf("StreamWritePCMBase64ToWav succeeded with empty data")
+	}
+}
+
+func TestChatSTT(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	tr, err := ChatSTT(ctx, "https://interview.0x535a.cn/api/download/audio/453a4dcd-2000-4aff-8125-c8fe9209a31b.mp3")
+	if err != nil {
+		t.Errorf("ChatSTT failed: %v", err)
+	} else {
+		t.Logf("ChatSTT succeeded: %s", tr)
 	}
 }

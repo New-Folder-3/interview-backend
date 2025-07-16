@@ -7,7 +7,6 @@ import (
 	"interview/internal/db"
 	"interview/internal/model"
 	"interview/util"
-	"sync"
 	"time"
 )
 
@@ -81,83 +80,109 @@ func GetMessage(messageIDs []string) (*[]Message, error) {
 	return &ret, nil
 }
 
-func NewMessage(conversationID, Text string, Audio, Image []string, Video [][]string) (string, []string, string, error) {
+func NewMessage(conversationID, Text string, Audio string, Image []string, Video []string) (string, string, string, error) {
 	// Add Message to Conversation
 	messageID, err := CreateMessage(conversationID, 1)
 	if err != nil {
-		return "", nil, "", errors.WithStack(err)
+		return "", "", "", errors.WithStack(err)
 	}
 
 	// Add Content to Message
-	transcription := make([]string, len(Audio))
-	var transcriptWG sync.WaitGroup
-	for index, audio := range Audio {
-		if err = CreateContent(messageID, Content{Audio: &audio}); err != nil {
-			return "", nil, "", errors.WithStack(err)
+	var transcript string
+	transcriptChannel := make(chan struct{})
+	if Audio != "" {
+		content := Content{
+			Type: "input_audio",
+			InputAudio: &InputAudio{
+				Format: "mp3",
+				Data:   Audio,
+			},
 		}
-		transcriptWG.Add(1)
+		if err = CreateContent(messageID, content); err != nil {
+			return "", "", "", errors.WithStack(err)
+		}
+
 		go func() {
-			defer transcriptWG.Done()
+			defer close(transcriptChannel)
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
 
-			transcript, err := util.ChatSTT(ctx, audio)
+			tr, err := util.ChatSTT(ctx, Audio)
 			if err != nil {
-				transcription[index] = ""
 				util.ErrorPrinter(err)
+				transcript = ""
 			} else {
-				transcription[index] = transcript
+				transcript = tr
 			}
 		}()
+	} else {
+		close(transcriptChannel)
 	}
+
 	for _, image := range Image {
-		if err = CreateContent(messageID, Content{Image: &image}); err != nil {
-			return "", nil, "", errors.WithStack(err)
+		content := Content{
+			Type: "image_url",
+			ImageURL: &ImageURL{
+				URL: image,
+			},
+		}
+		if err = CreateContent(messageID, content); err != nil {
+			return "", "", "", errors.WithStack(err)
 		}
 	}
-	for _, video := range Video {
-		if err = CreateContent(messageID, Content{Video: &video}); err != nil {
-			return "", nil, "", errors.WithStack(err)
+
+	if len(Video) > 0 {
+		content := Content{
+			Type:  "video",
+			Video: &Video,
+		}
+		if err = CreateContent(messageID, content); err != nil {
+			return "", "", "", errors.WithStack(err)
 		}
 	}
-	if err = CreateContent(messageID, Content{
-		Text: &Text}); err != nil {
-		return "", nil, "", errors.WithStack(err)
+
+	if Text != "" {
+		content := Content{
+			Type: "text",
+			Text: &Text,
+		}
+		if err = CreateContent(messageID, content); err != nil {
+			return "", "", "", errors.WithStack(err)
+		}
 	}
 
 	// send message to AI
 	conversation, err := GetConversation(conversationID)
 	if err != nil {
-		return "", nil, "", errors.WithStack(err)
+		return "", "", "", errors.WithStack(err)
 	}
-	response, err := CommonChat(conversation)
-	if err != nil {
-		return "", nil, "", errors.WithStack(err)
+
+	response, rawAudio, err := CommonChat(conversation)
+	switch {
+	case err != nil:
+		return "", "", "", errors.WithStack(err)
+	case response == "":
+		return "", "", "", errors.New("response is empty")
 	}
 
 	// add response to conversation
 	messageID, err = CreateMessage(conversationID, 2)
 	if err != nil {
-		return "", nil, "", errors.WithStack(err)
-	}
-	if len(response.Output.Choices) > 0 {
-		err = CreateContent(messageID, Content{
-			Text: response.Output.Choices[0].Message.Content[0].Text,
-		})
-		if err != nil {
-			return "", nil, "", errors.WithStack(err)
-		}
-	} else {
-		return "", nil, "", errors.New("response is empty")
+		return "", "", "", errors.WithStack(err)
 	}
 
-	ttsURL, err := util.ChatTTS(*response.Output.Choices[0].Message.Content[0].Text)
+	if err = CreateContent(messageID, Content{
+		Type: "text",
+		Text: &response,
+	}); err != nil {
+		return "", "", "", errors.WithStack(err)
+	}
+
+	<-transcriptChannel
+	audio, err := util.ChunksToWavBase64(rawAudio)
 	if err != nil {
 		util.ErrorPrinter(err)
+		audio = ""
 	}
-
-	// Wait for all transcripts to finish
-	transcriptWG.Wait()
-
-	return *response.Output.Choices[0].Message.Content[0].Text, transcription, ttsURL, nil
+	return response, transcript, audio, nil
 }

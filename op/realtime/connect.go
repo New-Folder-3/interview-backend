@@ -18,7 +18,7 @@ var userAudioName map[string]string
 
 func RemoteToFrontend(done chan error, remote *websocket.Conn, frontend *websocket.Conn, conversationIDChan chan string, userID string) {
 	defer close(done)
-	conversation := op.NewConversation()
+	conversation := op.NewConversation(conf.Conf.Model.ChatModel, conf.Conf.Default.ModelVoice)
 	conversationID, err := op.CreateConversation(userID, conversation, 0)
 	conversationIDChan <- conversationID
 	if err != nil {
@@ -48,7 +48,7 @@ func RemoteToFrontend(done chan error, remote *websocket.Conn, frontend *websock
 				if err != nil {
 					util.ErrorPrinter(errors.WithStack(err))
 				} else {
-					conversation.AddAudio(userAudioURL)
+					conversation.AddAudio(userAudioURL, "")
 				}
 			case "response.text.done":
 				conversation.AddText(ret.Text, 2)

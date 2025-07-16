@@ -2,6 +2,7 @@ package handles
 
 import (
 	"github.com/gin-gonic/gin"
+	"interview/internal/conf"
 	"interview/internal/db"
 	"interview/op"
 	"interview/util"
@@ -68,7 +69,8 @@ func CreateConversation(c *gin.Context) {
 		util.ErrorResp(c, "Username mismatch", 400)
 		return
 	}
-	conversationID, err := op.CreateConversation(request.Username, op.NewConversation(), request.PreferRole)
+
+	conversationID, err := op.CreateConversation(request.Username, op.NewConversation(conf.Conf.Model.ChatModel, conf.Conf.Default.ModelVoice), request.PreferRole)
 	request.ConversationID = conversationID
 	if err != nil {
 		util.ErrorPrinter(err)

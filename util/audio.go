@@ -1,8 +1,10 @@
 package util
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/binary"
+	"fmt"
 	"github.com/pkg/errors"
 	"io"
 	"os"
@@ -123,4 +125,43 @@ func SaveBase64WebmToMp3(base64Data string, mp3FilePath string) error {
 	}
 
 	return nil
+}
+
+func WriteWAVHeader(buf *bytes.Buffer, dataLen int, sampleRate int, bitsPerSample int, channels int) {
+	buf.WriteString("RIFF")
+	binary.Write(buf, binary.LittleEndian, uint32(36+dataLen))
+	buf.WriteString("WAVE")
+	buf.WriteString("fmt ")
+	binary.Write(buf, binary.LittleEndian, uint32(16)) // PCM
+	binary.Write(buf, binary.LittleEndian, uint16(1))  // PCM format
+	binary.Write(buf, binary.LittleEndian, uint16(channels))
+	binary.Write(buf, binary.LittleEndian, uint32(sampleRate))
+	byteRate := sampleRate * channels * bitsPerSample / 8
+	binary.Write(buf, binary.LittleEndian, uint32(byteRate))
+	blockAlign := channels * bitsPerSample / 8
+	binary.Write(buf, binary.LittleEndian, uint16(blockAlign))
+	binary.Write(buf, binary.LittleEndian, uint16(bitsPerSample))
+	buf.WriteString("data")
+	binary.Write(buf, binary.LittleEndian, uint32(dataLen))
+}
+
+func ChunksToWavBase64(chunks []string) (string, error) {
+	var audioData bytes.Buffer
+	for _, chunk := range chunks {
+		decoded, err := base64.StdEncoding.DecodeString(chunk)
+		if err != nil {
+			return "", fmt.Errorf("base64 decode chunk error: %v", err)
+		}
+		audioData.Write(decoded)
+	}
+	raw := audioData.Bytes()
+	dataLen := len(raw)
+
+	var wav bytes.Buffer
+	WriteWAVHeader(&wav, dataLen, 24000, 16, 1)
+	wav.Write(raw)
+
+	wavBase64 := base64.StdEncoding.EncodeToString(wav.Bytes())
+	dataURL := "data:audio/wav;base64," + wavBase64
+	return dataURL, nil
 }

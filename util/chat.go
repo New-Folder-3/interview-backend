@@ -52,7 +52,7 @@ type STTTaskResponse struct {
 		Result     []struct {
 			TranscriptionURL string `json:"transcription_url"`
 			SubtaskStatus    string `json:"subtask_status"`
-		} `json:"result"`
+		} `json:"results"`
 	} `json:"output"`
 }
 
@@ -137,16 +137,32 @@ func ChatSTT(ctx context.Context, audioURL string) (string, error) {
 			FileURLs []string `json:"file_urls"`
 		}{FileURLs: []string{audioURL}},
 	}
+	//key := "sk-25e2de76750247458b1ed64fb8000d07"
+	//request := STTRequest{
+	//	Model: "paraformer-v2",
+	//	Input: struct {
+	//		FileURLs []string `json:"file_urls"`
+	//	}{FileURLs: []string{audioURL}},
+	//}
+
 	jsonPayload, _ := json.Marshal(request)
-	req, _ := http.NewRequest("POST", conf.AliMDUrl, bytes.NewBuffer(jsonPayload))
+	req, _ := http.NewRequest("POST", conf.AliSTTUrl, bytes.NewBuffer(jsonPayload))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+key)
+	req.Header.Set("X-DashScope-Async", "enable")
+
 	resp, err := client.GlobalHTTPClient.Do(req)
-	if err != nil || resp.StatusCode != http.StatusOK {
-		return "", errors.WithMessage(err, resp.Status)
+	//resp, err := http.DefaultClient.Do(req)
+
+	if err != nil {
+		return "", errors.WithStack(err)
 	}
 	defer resp.Body.Close()
 	data, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode != http.StatusOK {
+		return "", errors.WithMessagef(errors.New("STT request failed"), "Status: %s, Response: %s", resp.Status, string(data))
+	}
+
 	var ret STTSubmitResponse
 	if err = json.Unmarshal(data, &ret); err != nil {
 		return "", errors.WithStack(err)
@@ -184,6 +200,9 @@ func ChatSTTTask(taskID string) (string, string, error) {
 	req, _ := http.NewRequest("GET", fmt.Sprintf(conf.AliTaskUrlTemplate, taskID), nil)
 	req.Header.Set("Authorization", "Bearer "+conf.Conf.API.AliyunAPIKey)
 	resp, err := client.GlobalHTTPClient.Do(req)
+	//req.Header.Set("Authorization", "Bearer sk-25e2de76750247458b1ed64fb8000d07")
+	//resp, err := http.DefaultClient.Do(req)
+
 	if err != nil || resp.StatusCode != http.StatusOK {
 		return "", "", errors.WithMessage(err, resp.Status)
 	}
@@ -206,7 +225,10 @@ func ChatSTTJson(url string) (string, error) {
 		return "", errors.New("URL is required")
 	}
 	req, _ := http.NewRequest("GET", url, nil)
+
 	resp, err := client.GlobalHTTPClient.Do(req)
+	//resp, err := http.DefaultClient.Do(req)
+
 	if err != nil || resp.StatusCode != http.StatusOK {
 		return "", errors.WithMessage(err, resp.Status)
 	}

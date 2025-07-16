@@ -9,10 +9,15 @@ import (
 	"strings"
 )
 
-func NewConversation() *Conversation {
+func NewConversation(model, voice string) *Conversation {
 	return &Conversation{
-		Model:      conf.Conf.Model.ChatModel,
-		Parameters: &Parameters{},
+		Model:      model,
+		Modalities: []string{"text", "audio"},
+		Audio: Audio{
+			Voice:  voice,
+			Format: "wav",
+		},
+		Stream: true,
 	}
 }
 
@@ -26,11 +31,12 @@ func (c *Conversation) AddText(txt string, role int) *Conversation {
 		Role: conf.Role[role],
 		Content: []Content{
 			Content{
+				Type: "text",
 				Text: &txt,
 			},
 		},
 	}
-	c.Input.Messages = append(c.Input.Messages, msg)
+	c.Messages = append(c.Messages, msg)
 	return c
 }
 
@@ -41,42 +47,52 @@ func (c *Conversation) AddImg(txts ...string) *Conversation {
 	for _, txt := range txts {
 		content := Content{}
 		if strings.HasPrefix(txt, "https://") {
-			content.Image = &txt
+			content.Type = "image_url"
+			content.ImageURL = &ImageURL{URL: txt}
 		} else {
+			content.Type = "text"
 			content.Text = &txt
 		}
 		msg.Content = append(msg.Content, content)
 	}
-	c.Input.Messages = append(c.Input.Messages, msg)
+	c.Messages = append(c.Messages, msg)
 	return c
 }
 
-func (c *Conversation) AddAudio(txts ...string) *Conversation {
+func (c *Conversation) AddAudio(audio string, txt string) *Conversation {
 	msg := Message{
-		Role:    "user",
-		Content: make([]Content, len(txts)),
+		Role: "user",
 	}
-	for _, txt := range txts {
-		content := Content{}
-		if strings.HasPrefix(txt, "https://") {
-			content.Audio = &txt
-		} else {
-			content.Text = &txt
+	audioContent := Content{
+		Type: "input_audio",
+		InputAudio: &InputAudio{
+			Format: "mp3",
+			Data:   audio,
+		},
+	}
+	if txt == "" {
+		txtContent := Content{
+			Type: "text",
+			Text: &txt,
 		}
-		msg.Content = append(msg.Content, content)
+		msg.Content = append(msg.Content, audioContent, txtContent)
 	}
-	c.Input.Messages = append(c.Input.Messages, msg)
+	c.Messages = append(c.Messages, msg)
 	return c
 }
 
-func (c *Conversation) AddResponse(r *Response) *Content {
-	content := r.Output.Choices[0].Message.Content[0]
+func (c *Conversation) AddResponse(text string) *Conversation {
 	msg := Message{
-		Role:    "assistant",
-		Content: []Content{content},
+		Role: "assistant",
+		Content: []Content{
+			Content{
+				Type: "text",
+				Text: &text,
+			},
+		},
 	}
-	c.Input.Messages = append(c.Input.Messages, msg)
-	return &content
+	c.Messages = append(c.Messages, msg)
+	return c
 }
 
 func CreateConversation(UserID string, c *Conversation, preferRole int) (string, error) {
@@ -86,13 +102,7 @@ func CreateConversation(UserID string, c *Conversation, preferRole int) (string,
 		UserID:     UserID,
 		Model:      c.Model,
 		PreferRole: preferRole,
-
-		ResultFormat:      c.Parameters.ResultFormat,
-		Temperature:       c.Parameters.Temperature,
-		TopP:              c.Parameters.TopP,
-		EnableThinking:    c.Parameters.EnableThinking,
-		PresencePenalty:   c.Parameters.PresencePenalty,
-		IncrementalOutput: c.Parameters.IncrementalOutput,
+		ModelVoice: c.Audio.Voice,
 	}
 	err := db.CreateConversation(&conversation)
 	if err != nil {
@@ -114,6 +124,7 @@ func CreateConversation(UserID string, c *Conversation, preferRole int) (string,
 	}
 
 	if err = CreateContent(messageID, Content{
+		Type: "text",
 		Text: &conf.InterviewerPrompt[preferRole],
 	}); err != nil {
 		return "", errors.WithStack(err)
@@ -157,20 +168,8 @@ func GetConversation(ConversationID string) (*Conversation, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	ret := &Conversation{
-		Model: conversation.Model,
-		Input: struct {
-			Messages []Message `json:"messages"`
-		}{Messages: *messages},
-		Parameters: &Parameters{
-			ResultFormat:      conversation.ResultFormat,
-			Temperature:       conversation.Temperature,
-			TopP:              conversation.TopP,
-			EnableThinking:    conversation.EnableThinking,
-			PresencePenalty:   conversation.PresencePenalty,
-			IncrementalOutput: conversation.IncrementalOutput,
-		},
-	}
+	ret := NewConversation(conversation.Model, conversation.ModelVoice)
+	ret.Messages = *messages
 	return ret, nil
 }
 
@@ -185,7 +184,9 @@ func CombineConversations(ConversationIDs []string, UserID string) (string, erro
 		}
 
 		if firstConversation {
-			newConversationID, err = CreateConversation(UserID, NewConversation(), conversationDB.PreferRole)
+			newConversationID, err = CreateConversation(UserID,
+				NewConversation(conversationDB.Model, conversationDB.ModelVoice),
+				conversationDB.PreferRole)
 			if err != nil {
 				continue
 			}
