@@ -9,6 +9,7 @@ import (
 	"interview/util"
 	"io"
 	"mime/multipart"
+	"os"
 	"path"
 	"path/filepath"
 )
@@ -36,13 +37,40 @@ func FileSaver(typ string) func(*gin.Context) {
 			ext = ".mp4"
 		}
 
+		var err error
 		filename := fmt.Sprintf("%s%s", uuid.New().String(), ext)
-		filePath := filepath.Join(flags.DataDir, typ, filename)
-		err := util.SaveUploadFile(filePath, &file)
+		tmpfile, err := os.CreateTemp("", "upload-*")
+		if err != nil {
+			util.ErrorPrinter(err)
+			util.ErrorResp(c, "Failed to create temp file", 500)
+			return
+		}
+		defer os.Remove(tmpfile.Name())
+		defer tmpfile.Close()
+
+		if _, err = io.Copy(tmpfile, file); err != nil {
+			util.ErrorPrinter(err)
+			util.ErrorResp(c, "Failed to save file", 500)
+			return
+		}
+		if _, err = tmpfile.Seek(0, io.SeekStart); err != nil {
+			util.ErrorPrinter(err)
+			util.ErrorResp(c, "Failed to seek file", 500)
+			return
+		}
+
+		if conf.Conf.S3.Use {
+			filePath := filepath.Join(conf.Conf.S3.Path, filename)
+			err = util.S3Upload(tmpfile, filePath)
+		} else {
+			filePath := filepath.Join(flags.DataDir, typ, filename)
+			err = util.SaveUploadFile(filePath, tmpfile)
+		}
 
 		if err != nil {
 			util.ErrorPrinter(err)
 			util.ErrorResp(c, err.Error(), 500)
+			return
 		}
 
 		URL := conf.Conf.Schema.URL + path.Join("/api/download", typ, filename)

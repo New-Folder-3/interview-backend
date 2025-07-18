@@ -49,6 +49,16 @@ type Mail struct {
 	From     string `json:"from" env:"FROM"`
 }
 
+type S3 struct {
+	Use       bool   `json:"use" env:"USE"`
+	Endpoint  string `json:"endpoint" env:"ENDPOINT"`
+	AccessKey string `json:"accessKey" env:"ACCESS_KEY"`
+	SecretKey string `json:"secretKey" env:"SECRET_KEY"`
+	Region    string `json:"region" env:"REGION"`
+	Bucket    string `json:"bucket" env:"BUCKET"`
+	Path      string `json:"path" env:"PATH"`
+}
+
 type Config struct {
 	Database Database `json:"database" envPrefix:"DB_"`
 	Schema   Schema   `json:"schema" envPrefix:"SCHEMA"`
@@ -56,6 +66,7 @@ type Config struct {
 	Default  Default  `json:"default" envPrefix:"DEFAULT"`
 	Model    Model    `json:"model" envPrefix:"MODEL"`
 	Mail     Mail     `json:"mail" envPrefix:"MAIL"`
+	S3       S3       `json:"s3" envPrefix:"S3_"`
 }
 
 func DefaultConfig() *Config {
@@ -82,6 +93,11 @@ func DefaultConfig() *Config {
 			TTSModel:  "qwen-tts",
 			STTModel:  "paraformer-v2",
 			ChatModel: "qwen-vl-max-latest",
+		},
+		S3: S3{
+			Use:    false,
+			Path:   "interview",
+			Region: "us-east-1",
 		},
 	}
 }

@@ -51,6 +51,7 @@ func serverStart() {
 
 	server.Init(r)
 	client.Init()
+	util.S3Init()
 
 	var httpHandler http.Handler = r
 	httpBase := fmt.Sprintf("%s:%d", conf.Conf.Schema.Listen, conf.Conf.Schema.Port)

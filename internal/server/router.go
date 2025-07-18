@@ -3,14 +3,12 @@ package server
 import (
 	"github.com/gin-gonic/gin"
 	"html/template"
-	"interview/cmd/flags"
 	"interview/internal/server/handles"
 	"interview/internal/server/handles/middlewares"
 	"interview/public"
 	"interview/util"
 	"io/fs"
 	"net/http"
-	"path/filepath"
 )
 
 func RouterRecovery() gin.HandlerFunc {
@@ -77,9 +75,9 @@ func Init(e *gin.Engine) {
 	upload.POST("/audio", middlewares.Auth, middlewares.FileChecker("audio"), handles.FileSaver("audio"))
 	upload.POST("/audio64", middlewares.Auth, handles.Audio64Saver)
 	upload.POST("/video", middlewares.Auth, middlewares.FileChecker("video"), handles.FileSaver("video"))
-	download.Static("/image", filepath.Join(flags.DataDir, "image"))
-	download.Static("/audio", filepath.Join(flags.DataDir, "audio"))
-	download.Static("/video", filepath.Join(flags.DataDir, "video"))
+	download.GET("/image/:filename", handles.DownloadHandler)
+	download.GET("/audio/:filename", handles.DownloadHandler)
+	download.GET("/video/:filename", handles.DownloadHandler)
 
 	// Static files
 	e.StaticFS("/assets", http.FS(assetsFS))
