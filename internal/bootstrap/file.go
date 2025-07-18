@@ -9,4 +9,5 @@ import (
 func InitFile() {
 	util.CreateFolder(filepath.Join(flags.DataDir, "image"))
 	util.CreateFolder(filepath.Join(flags.DataDir, "audio"))
+	util.CreateFolder(filepath.Join(flags.DataDir, "video"))
 }
