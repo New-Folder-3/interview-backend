@@ -15,8 +15,8 @@ func CreateContent(MessageID string, c Content) error {
 		audio = &c.InputAudio.Data
 	case c.ImageURL != nil:
 		image = &c.ImageURL.URL
-	case c.Video != nil:
-		video = &c.Video.URL
+	case c.VideoURL != nil:
+		video = &c.VideoURL.URL
 	}
 	content := model.Content{
 		ID:        id,
@@ -86,9 +86,9 @@ func GetContent(contentIDs []string) (*[]Content, error) {
 			content.ImageURL = &ImageURL{
 				URL: *contentDB.Image,
 			}
-		case content.Video != nil:
+		case contentDB.Video != nil:
 			content.Type = "video_url"
-			content.Video = &VideoURL{
+			content.VideoURL = &VideoURL{
 				URL: *contentDB.Video,
 			}
 		}

@@ -133,8 +133,8 @@ func NewMessage(conversationID, Text string, Audio string, Image []string, Video
 
 	if Video != "" {
 		content := Content{
-			Type:  "video",
-			Video: &VideoURL{URL: Video},
+			Type:     "video_url",
+			VideoURL: &VideoURL{URL: Video},
 		}
 		if err = CreateContent(messageID, content); err != nil {
 			return "", "", "", errors.WithStack(err)

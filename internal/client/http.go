@@ -26,6 +26,6 @@ func InitHTTPClient() {
 
 	GlobalHTTPClient = &http.Client{
 		Transport: transport,
-		Timeout:   30 * time.Second,
+		Timeout:   10 * time.Minute,
 	}
 }
