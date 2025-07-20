@@ -7,11 +7,13 @@ import (
 	"interview/internal/db"
 	"interview/internal/model"
 	"interview/util"
+	"time"
 )
 
 func NewInterview(Username string) (string, error) {
 	interview := model.NewDefaultInterview()
 	interview.Username = Username
+	interview.CreateAt = time.Now().Unix()
 	userDB, err := db.GetUser(Username)
 	if err != nil {
 		return "", errors.WithStack(err)

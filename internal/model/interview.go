@@ -5,6 +5,7 @@ import "interview/util"
 type Interview struct {
 	ID       string `json:"id" gorm:"primary_key;unique;not null"` // 面试ID
 	Username string `json:"username" form:"userid"`                // 面试者ID
+	CreateAt int64  `json:"create_at" gorm:"not null"`             // 开始的时间戳
 
 	InterviewChangeable
 	ModelComments      string             `json:"model_comments"`                                                // 模型评价
