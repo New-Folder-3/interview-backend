@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	"interview/internal/db"
+	"interview/internal/model"
 	"interview/op"
 	"interview/util"
 )
@@ -121,7 +122,16 @@ func GetAllInterviews(c *gin.Context) {
 		return
 	}
 	interviews := util.DBToStringList(userDB.Interviews)
-	util.SuccessResp(c, interviews, "Get All Interviews Successfully")
+	var ret []model.Interview
+	for _, interviewID := range interviews {
+		interviewDB, err := db.GetInterview(interviewID)
+		if err != nil {
+			util.ErrorPrinter(err)
+			continue
+		}
+		ret = append(ret, *interviewDB)
+	}
+	util.SuccessResp(c, ret, "Get All Interviews Successfully")
 }
 
 func GetComment(c *gin.Context) {
@@ -197,7 +207,7 @@ func GetDimension(c *gin.Context) {
 		return
 	}
 
-	interviewDimension, err := op.GetDimension(request.ConversationID, request.InterviewID, request.Username)
+	interviewDimension, err := op.GetDimension(request.InterviewID, request.Username)
 	if err != nil {
 		util.ErrorPrinter(err)
 		util.ErrorResp(c, err.Error(), 500)
@@ -220,7 +230,7 @@ func GetKeywords(c *gin.Context) {
 		return
 	}
 
-	keywords, err := op.GetKeywords(request.ConversationID, request.InterviewID)
+	keywords, err := op.GetKeywords(request.InterviewID, request.Username)
 	if err != nil {
 		util.ErrorPrinter(err)
 		util.ErrorResp(c, err.Error(), 500)

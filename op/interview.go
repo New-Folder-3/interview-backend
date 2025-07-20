@@ -115,14 +115,18 @@ func AddUserComment(InterviewID string, Comment model.CommentContent) error {
 	return nil
 }
 
-func GetDimension(ConversationID, InterviewID, Username string) (model.InterviewDimension, error) {
+func GetDimension(InterviewID, Username string) (model.InterviewDimension, error) {
 	interviewDB, err := db.GetInterview(InterviewID)
 	if err != nil {
 		return model.InterviewDimension{}, errors.WithStack(err)
 	}
 
-	if ConversationID == "" {
-		ConversationID = interviewDB.ResultConversation
+	ConversationID, err := CombineConversations(
+		[]string{interviewDB.ResumeConversation,
+			interviewDB.InterviewConversation,
+			interviewDB.EmotionConversation}, Username)
+	if err != nil {
+		return model.InterviewDimension{}, errors.WithStack(err)
 	}
 
 	userDB, err := db.GetUser(Username)
@@ -159,14 +163,18 @@ func GetDimension(ConversationID, InterviewID, Username string) (model.Interview
 	return interviewDB.InterviewDimension, nil
 }
 
-func GetKeywords(ConversationID, InterviewID string) ([]string, error) {
+func GetKeywords(InterviewID, Username string) ([]string, error) {
 	interviewDB, err := db.GetInterview(InterviewID)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	if ConversationID == "" {
-		ConversationID = interviewDB.ResultConversation
+	ConversationID, err := CombineConversations(
+		[]string{interviewDB.ResumeConversation,
+			interviewDB.InterviewConversation,
+			interviewDB.EmotionConversation}, Username)
+	if err != nil {
+		return nil, errors.WithStack(err)
 	}
 
 	response, err := FastChatTxt(ConversationID,

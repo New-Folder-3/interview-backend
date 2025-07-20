@@ -96,7 +96,7 @@ func (c *Conversation) AddResponse(text string) *Conversation {
 }
 
 func CreateConversation(UserID string, c *Conversation, preferRole int) (string, error) {
-	id := util.GenerateToken(16)
+	id := "conversation_" + util.GenerateToken(16)
 	conversation := model.Conversation{
 		ID:         id,
 		UserID:     UserID,
@@ -182,7 +182,6 @@ func CombineConversations(ConversationIDs []string, UserID string) (string, erro
 		if err != nil {
 			continue
 		}
-
 		if firstConversation {
 			newConversationID, err = CreateConversation(UserID,
 				NewConversation(conversationDB.Model, conversationDB.ModelVoice),

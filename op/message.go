@@ -11,7 +11,7 @@ import (
 )
 
 func CreateMessage(ConversationID string, role int) (string, error) {
-	id := util.GenerateToken(16)
+	id := "message_" + util.GenerateToken(16)
 	message := model.Message{
 		ID:             id,
 		Role:           conf.Role[role],

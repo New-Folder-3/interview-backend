@@ -8,7 +8,7 @@ import (
 )
 
 func CreateContent(MessageID string, c Content) error {
-	id := util.GenerateToken(16)
+	id := "content_" + util.GenerateToken(16)
 	var audio, image, video *string
 	switch {
 	case c.InputAudio != nil:
@@ -78,7 +78,7 @@ func GetContent(contentIDs []string) (*[]Content, error) {
 		case contentDB.Audio != nil:
 			content.Type = "input_audio"
 			content.InputAudio = &InputAudio{
-				Format: "wav",
+				Format: "mp3",
 				Data:   *contentDB.Audio,
 			}
 		case contentDB.Image != nil:

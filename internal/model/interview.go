@@ -5,7 +5,7 @@ import "interview/util"
 type Interview struct {
 	ID       string `json:"id" gorm:"primary_key;unique;not null"` // 面试ID
 	Username string `json:"username" form:"userid"`                // 面试者ID
-	CreateAt int64  `json:"create_at" gorm:"not null"`             // 开始的时间戳
+	CreateAt int64  `json:"create_at"`                             // 开始的时间戳
 
 	InterviewChangeable
 	ModelComments      string             `json:"model_comments"`                                                // 模型评价
@@ -27,7 +27,6 @@ type InterviewChangeable struct {
 	ResumeConversation    string `json:"resume_conversation" form:"resume_conversation"`       // 第一次对话ID
 	InterviewConversation string `json:"interview_conversation" form:"interview_conversation"` // 第二次对话ID
 	EmotionConversation   string `json:"emotion_conversation" form:"emotion_conversation"`     // 第三次对话ID
-	ResultConversation    string `json:"result_conversation" form:"result_conversation"`       // 最终对话ID
 	VideoURL              string `json:"video_url" form:"video_url"`
 	ResumeURL             string `json:"resume_url" form:"resume_url"`
 	VideoClipURL          string `json:"video_url_clip" form:"video_url_clip"` // 视频片段URL
@@ -35,13 +34,12 @@ type InterviewChangeable struct {
 
 func NewDefaultInterview() Interview {
 	return Interview{
-		ID:       util.GenerateToken(16),
+		ID:       "interview_" + util.GenerateToken(16),
 		Username: "",
 		InterviewChangeable: InterviewChangeable{
 			ResumeConversation:    "",
 			InterviewConversation: "",
 			EmotionConversation:   "",
-			ResultConversation:    "",
 			VideoURL:              "",
 		},
 		ModelComments:      "",
