@@ -120,16 +120,15 @@ func GetDimension(InterviewID, Username string) (model.InterviewDimension, error
 	if err != nil {
 		return model.InterviewDimension{}, errors.WithStack(err)
 	}
+	userDB, err := db.GetUser(Username)
+	if err != nil {
+		return model.InterviewDimension{}, errors.WithStack(err)
+	}
 
 	ConversationID, err := CombineConversations(
 		[]string{interviewDB.ResumeConversation,
 			interviewDB.InterviewConversation,
 			interviewDB.EmotionConversation}, Username)
-	if err != nil {
-		return model.InterviewDimension{}, errors.WithStack(err)
-	}
-
-	userDB, err := db.GetUser(Username)
 	if err != nil {
 		return model.InterviewDimension{}, errors.WithStack(err)
 	}

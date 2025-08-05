@@ -30,6 +30,13 @@ func LoginPwdHandle(c *gin.Context) {
 		util.ErrorResp(c, err.Error(), 400)
 		return
 	}
+	user.LoginCount++
+	if err := db.UpdateUser(user); err != nil {
+		util.ErrorPrinter(err)
+		util.ErrorResp(c, err.Error(), 400)
+		return
+	}
+
 	if user.PwdHash == loginRequest.PwdHash {
 		newToken := model.Token{
 			Token:  util.GenerateToken(64),

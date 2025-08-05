@@ -45,7 +45,7 @@ func CommonChat(sender *Conversation) (string, []string, error) {
 		if err := json.Unmarshal([]byte(dat), &response); err != nil {
 			continue
 		}
-		ret += response.Choices[0].Delta.Audio.Transcript
+		ret += response.Choices[0].Delta.Content
 		audio = append(audio, response.Choices[0].Delta.Audio.Data)
 	}
 	if err := scanner.Err(); err != nil {

@@ -16,28 +16,30 @@ type User struct {
 }
 
 type UserNotChangeable struct {
-	ID           string `json:"username" gorm:"PrimaryKey;not null;omitempty"` // 用户名
-	Interviews   string `json:"interview" gorm:"omitempty"`                    // 面试ID列表，序列化存储
-	Conversation string `json:"conversation" gorm:"omitempty"`                 // 所有对话
+	ID           string `json:"username" gorm:"PrimaryKey;not null"` // 用户名
+	Interviews   string `json:"interview"`                           // 面试ID列表，序列化存储
+	Conversation string `json:"conversation"`                        // 所有对话
 
-	OTP   string `json:"otp" gorm:"omitempty"`
-	OTPTS int64  `json:"otp_ts" gorm:"omitempty"` // OTP时间戳
+	OTP        string `json:"otp"`
+	OTPTS      int64  `json:"otp_ts"` // OTP时间戳
+	LoginCount int64  `json:"login_count"`
 }
 
 type UserChangable struct {
-	Name              string `json:"name" gorm:"not null;omitempty"`         // 姓名
-	Email             string `json:"email" gorm:"unique;not null;omitempty"` // 邮箱
-	Phone             string `json:"phone" gorm:"unique;not null;omitempty"` // 电话
-	PreferInterviewer int    `json:"prefer_interviewer" gorm:"not null;omitempty"`
-	Age               int    `json:"age" gorm:"omitempty"`                            // 年龄
-	Job               string `json:"role" gorm:"omitempty"`                           // 职位
-	Gender            string `json:"gender" gorm:"omitempty"`                         // 性别
+	Name              string `json:"name" gorm:"not null"`         // 姓名
+	Email             string `json:"email" gorm:"unique;not null"` // 邮箱
+	Phone             string `json:"phone" gorm:"unique;not null"` // 电话
+	PreferInterviewer int    `json:"prefer_interviewer" gorm:"not null"`
+	Age               int    `json:"age"`                                             // 年龄
+	Job               string `json:"role"`                                            // 职位
+	Gender            string `json:"gender"`                                          // 性别
 	EnvironmentAudio  bool   `json:"environment_audio" gorm:"not null;default:false"` // 是否开启环境音
+	ResumeURL         string `json:"resume_url" form:"resume_url"`
 }
 
 type UserPwd struct {
-	PwdHash string `json:"pwd_hash" gorm:"not null;omitempty"` // 密码哈希
-	PwdTS   int64  `json:"pwd_ts" gorm:"not null;omitempty"`   // 密码修改时间戳
+	PwdHash string `json:"pwd_hash" gorm:"not null"` // 密码哈希
+	PwdTS   int64  `json:"pwd_ts" gorm:"not null"`   // 密码修改时间戳
 }
 
 func NewDefaultUser() User {
