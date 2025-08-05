@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../LrcAPI-Go/.idea/LrcAPI-Go.iml" filepath="$PROJECT_DIR$/../LrcAPI-Go/.idea/LrcAPI-Go.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/interview-backend.iml" filepath="$PROJECT_DIR$/.idea/interview-backend.iml" />
     </modules>
   </component>

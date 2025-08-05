@@ -24,7 +24,6 @@ type InterviewDimension struct {
 }
 
 type InterviewChangeable struct {
-	ResumeConversation    string `json:"resume_conversation"`                                  // 简历对话ID
 	InterviewConversation string `json:"interview_conversation" form:"interview_conversation"` // 第二次对话ID
 	EmotionConversation   string `json:"emotion_conversation" form:"emotion_conversation"`     // 第三次对话ID
 	VideoURL              string `json:"video_url" form:"video_url"`
@@ -36,7 +35,6 @@ func NewDefaultInterview() Interview {
 		ID:       "interview_" + util.GenerateToken(16),
 		Username: "",
 		InterviewChangeable: InterviewChangeable{
-			ResumeConversation:    "",
 			InterviewConversation: "",
 			EmotionConversation:   "",
 			VideoURL:              "",

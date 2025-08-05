@@ -26,15 +26,16 @@ type UserNotChangeable struct {
 }
 
 type UserChangable struct {
-	Name              string `json:"name" gorm:"not null"`         // 姓名
-	Email             string `json:"email" gorm:"unique;not null"` // 邮箱
-	Phone             string `json:"phone" gorm:"unique;not null"` // 电话
-	PreferInterviewer int    `json:"prefer_interviewer" gorm:"not null"`
-	Age               int    `json:"age"`                                             // 年龄
-	Job               string `json:"role"`                                            // 职位
-	Gender            string `json:"gender"`                                          // 性别
-	EnvironmentAudio  bool   `json:"environment_audio" gorm:"not null;default:false"` // 是否开启环境音
-	ResumeURL         string `json:"resume_url" form:"resume_url"`
+	Name               string `json:"name" gorm:"not null"`         // 姓名
+	Email              string `json:"email" gorm:"unique;not null"` // 邮箱
+	Phone              string `json:"phone" gorm:"unique;not null"` // 电话
+	PreferInterviewer  int    `json:"prefer_interviewer" gorm:"not null"`
+	Age                int    `json:"age"`                                             // 年龄
+	Job                string `json:"role"`                                            // 职位
+	Gender             string `json:"gender"`                                          // 性别
+	EnvironmentAudio   bool   `json:"environment_audio" gorm:"not null;default:false"` // 是否开启环境音
+	ResumeURL          string `json:"resume_url" form:"resume_url"`
+	ResumeConversation string `json:"resume_conversation"` // 简历对话ID
 }
 
 type UserPwd struct {
