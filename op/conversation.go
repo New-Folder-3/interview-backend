@@ -178,6 +178,9 @@ func CombineConversations(ConversationIDs []string, UserID string) (string, erro
 	var newConversationMessage []string
 	firstConversation := true
 	for _, conversationID := range ConversationIDs {
+		if conversationID == "" {
+			continue
+		}
 		conversationDB, err := db.GetConversation(conversationID)
 		if err != nil {
 			continue
