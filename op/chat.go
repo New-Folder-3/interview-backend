@@ -55,6 +55,7 @@ func CommonChat(sender *Conversation) (string, []string, error) {
 }
 
 func FastChatTxt(conversationID, txt string) (string, error) {
+	fmt.Println(txt)
 	conversation, err := GetConversation(conversationID)
 	if err != nil {
 		return "", errors.WithStack(err)
